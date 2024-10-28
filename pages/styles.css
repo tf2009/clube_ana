@@ -18,7 +18,9 @@ h1 {
 
 h2 {
     margin-top: 20px;
+    cursor: pointer; /* To indicate it's clickable */
 }
+
 h3 {
     margin: 5px 0; /* Reduced margin for consistency */
     font-size: 1.2em;
@@ -77,19 +79,28 @@ form input {
     margin-bottom: 10px;
 }
 
-.calendar-table {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    border-collapse: collapse;
+.day-names {
+    display: flex;
     width: 100%;
-    max-width: 600px;
+}
+
+.day-names div {
+    flex: 1; /* Equal width for day names */
+    text-align: center;
+    font-weight: bold;
+}
+
+.week {
+    display: flex;
+    width: 100%; /* Full width for weeks */
 }
 
 .day {
     border: 1px solid #ddd;
     padding: 10px;
-    height: 60px;
+    height: 80px; /* Adjusted for better visibility */
     cursor: pointer;
+    position: relative; /* Needed for booking placement */
 }
 
 .booking {
@@ -98,4 +109,7 @@ form input {
     border-radius: 3px;
     color: white;
     text-align: center;
+    position: absolute; /* Positioned inside the day */
+    bottom: 5px; /* Align at the bottom */
+    width: calc(100% - 4px); /* Full width minus border */
 }

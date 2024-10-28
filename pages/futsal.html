@@ -7,7 +7,7 @@
   <style>
     /* General Styles */
     body {
-      font-family:'Courier New', Courier, monospace;
+      font-family: 'Courier New', Courier, monospace;
       margin: 20px;
       background-color: #f9f9f9;
     }
@@ -23,17 +23,17 @@
       font-size: 2.3em;
     }
     #club-logo {
-      position: absolute; 
-      top: 10px; 
-      left: 20px; 
-      height: 60px; 
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      height: 60px;
     }
     #homeButton {
       position: absolute;
       right: 20px;
       top: 20px;
       padding: 10px 20px;
-      background-color: #c8102e; 
+      background-color: #c8102e;
       color: white;
       border: none;
       cursor: pointer;
@@ -68,15 +68,15 @@
       margin: 5px 0;
       border: 1px solid #ccc;
       border-radius: 4px;
-      width: 20%; 
+      width: 20%;
     }
     #searchAthlete {
-      width: 20%; 
+      width: 20%;
     }
     textarea {
-      height: 50px; 
-      vertical-align: middle; 
-      width: 60%; 
+      height: 50px;
+      vertical-align: middle;
+      width: 60%;
     }
     #bookingDate, #bookingStartTime, #bookingEndTime {
       width: 10%;
@@ -91,8 +91,8 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px; 
-      margin-bottom: 30px; 
+      margin-top: 10px;
+      margin-bottom: 30px;
     }
     th, td {
       border: 1px solid #ddd;
@@ -105,7 +105,7 @@
     .remove-athlete {
       cursor: pointer;
       color: red;
-      font-size: 0.9em; 
+      font-size: 0.9em;
     }
     .calendar-container {
       margin-top: 30px;
@@ -212,20 +212,6 @@
     let currentDate = new Date();
     const bookings = [];
     let athletes = []; // Array to hold athlete data
-
-    // Define colors for each escalão
-    const escalãoColors = {
-      "Infantis": "#d1e7dd",
-      "infantis": "#d1e7dd",
-      "Iniciados": "#fff3cd",
-      "iniciados": "#fff3cd",
-      "Juvenis": "#cfe2ff",
-      "juvenis": "#cfe2ff",
-      "Juniores": "#f9cb9c",
-      "juniores": "#f9cb9c",
-      "Seniores": "#e6a9e3",
-      "seniores": "#e6a9e3" //solucao temporaria para nao adicionar mais funcoes
-    };
 
     // Load athletes from local storage
     function loadAthletes() {
@@ -334,7 +320,7 @@
       calendar.appendChild(dayNamesRow);
 
       // Render empty days before the first day
-      const weekDiv = document.createElement('div');
+      let weekDiv = document.createElement('div');
       weekDiv.className = 'week';
       for (let i = 0; i < startDay; i++) {
         const emptyDay = document.createElement('div');
