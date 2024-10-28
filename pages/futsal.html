@@ -191,7 +191,10 @@
   </div>
 
   <div class="functionality">
-    <h2>Atletas inscritos</h2>
+    <h2 onclick="toggleDropdown('listDropdown')">
+    Atletas inscritos<span>▼</span>
+  </h2>
+  <div id="listDropdown" class="dropdown"></div>
     <div id="athleteListContainer">
       <div id="athleteTables"></div> <!-- Container for athlete lists by escalão -->
     </div>
