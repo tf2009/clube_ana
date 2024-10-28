@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Sócios - Clube Ana</title>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet"> <!-- Link to handwritten font -->
+  <style>
+    body {
+      font-family:'Courier New', Courier, monospace;
+      margin: 20px;
+      background-color: #add8e6; /* Match the header color */
+    }
+    header {
+      background-color: #add8e6; /* Light blue header */
+      color: black;
+      padding: 10px;
+      text-align: center;
+      position: relative; /* For positioning the logo */
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.5em;
+      font-family:'Courier New', Courier, monospace;
+    }
+    h3 {
+      margin: 5px 0; /* Reduced margin for consistency */
+      font-size: 1.2em;
+    }
+    h2 {
+      margin: 10px 0;
+      font-size: 1.5em;
+      font-family:'Courier New', Courier, monospace;
+    }
+    #club-logo {
+      position: absolute; /* Position logo absolutely */
+      top: 10px; /* Distance from the top */
+      left: 10px; /* Distance from the left */
+      width: 100px; /* Set width for the logo */
+      margin-bottom: 10px; /* Space below the logo */
+    }
+    /* Container for the icons */
+    .sports-icons {
+      display: flex;
+      justify-content: space-around; /* Space between icons */
+      align-items:center; /* Center icons vertically */
+      margin: 20px auto;
+      max-width: 1300px; /* Adjust max-width to fit icons in a row */
+    }
+    .sports-icons a {
+      display: inline-block;
+      overflow: hidden;
+      width: 200px; /* Fixed width for each icon */
+      height: 200px;
+      border-radius: 30%; /*circular shape*/
+      transition:transform 0.3s;
+    }
+    .sports-icons a:hover {
+      transform: scale(1.05); /* Slightly scale up on hover */
+    }
+    .sports-icons img {
+      width: 100%; /* Set image to take full width of container */
+      height: 100%;
+      object-fit:fill
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      display: none; /* Initially hide the table */
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    td[contenteditable="true"] {
+      background-color: #e8f0fe;
+      outline: none;
+    }
+    #save-button {
+      margin-top: 40px;
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    #save-button:hover {
+      background-color: #45a049;
+    }
+    #memberSearch {
+      margin-bottom: 20px;
+      padding: 5px;
+      font-size: 14px;
+      width: 50%;
+      max-width: 300px;
+      display: none; /* Hide search input initially */
+    }
+    #toggleTableButton {
+      background-color: #d3d3d3; /* Light grey button */
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 1.2em;
+      margin-top: 20px;
+      display: flex; /* Flexbox to align items */
+      align-items: center; /* Center items vertically */
+    }
+    #toggleTableButton:hover {
+      background-color: #c0c0c0; /* Darker grey on hover */
+    }
+    #dropdownIndicator {
+      margin-left: 10px; /* Space between text and indicator */
+      font-size: 0.8em;
+    }
+    .old-style {
+      font-family: 'Pacifico', cursive; /* Handwritten font */
+      color: #333;
+      font-size: 1.5em; /* Slightly larger for emphasis */
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img id="club-logo" src="images/c_ana.jpg" alt="Clube Ana Logo" title="Clube Ana">
+    <h1>Clube Ana de Santa Maria</h1>
+    <p class="old-style">Desde 8 de Fevereiro de 1981</p>
+    <br></br>
+    <br></br>
+    <br></br>
+    <h2>As nossas modalidades</h2>
+    <div class="sports-icons">
+      <a href="pages/futsal.html"><img src="images/futsal.png" alt="Futsal" title="Futsal"></a>
+      <a href="pages/volley.html"><img src="images/volley.png" alt="Volleyball" title="Volleyball"></a>
+      <a href="pages/basket.html"><img src="images/basket.png" alt="Basketball" title="Basketball"></a>
+      <a href="pages/judo.html"><img src="images/judo.png" alt="Judo" title="Judo"></a>
+    </div>
+  </header>
+
+  <button id="toggleTableButton">Lista de Sócios
+    <span id="dropdownIndicator">▼</span> <!-- Dropdown indicator -->
+  </button>
+  <input type="text" id="memberSearch" placeholder="Procurar sócio...">
+
+  <div id="data-container">
+    <table id="data-table">
+      <!-- Table content will be inserted here -->
+    </table>
+  </div>
+  <button id="save-button" style="display: none;">Gravar e exportar lista</button>
+
+  <script>
+    let jsonData; // Store data globally for saving
+
+    // Fetch and load the Excel file automatically
+    window.onload = function() {
+      fetch('data.xlsx')
+        .then(response => response.arrayBuffer())
+        .then(data => {
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          
+          displayData(jsonData);
+          document.getElementById('save-button').style.display = 'inline'; // Show save button
+        })
+        .catch(error => {
+          document.getElementById('data-container').innerHTML = `<p>Error loading data: ${error.message}</p>`;
+          console.error('There was a problem loading the Excel file:', error);
+        });
+    };
+
+    // Function to create and display the table
+    function displayData(data) {
+      const container = document.getElementById('data-container');
+      const table = document.getElementById('data-table');
+      table.innerHTML = ''; // Clear any existing content
+
+      data.forEach((row, rowIndex) => {
+        const tr = document.createElement('tr');
+
+        row.forEach(cellData => {
+          const cell = document.createElement(rowIndex === 0 ? 'th' : 'td');
+          cell.textContent = cellData || '';
+          
+          // Make cells editable, except for header row
+          if (rowIndex > 0) cell.setAttribute('contenteditable', 'true');
+          
+          tr.appendChild(cell);
+        });
+
+        table.appendChild(tr);
+      });
+    }
+
+    // Toggle table visibility and search input
+    document.getElementById('toggleTableButton').addEventListener('click', () => {
+      const table = document.getElementById('data-table');
+      const searchInput = document.getElementById('memberSearch');
+
+      if (table.style.display === "none" || table.style.display === "") {
+        table.style.display = "table"; // Show the table
+        searchInput.style.display = "block"; // Show the search input
+      } else {
+        table.style.display = "none"; // Hide the table
+        searchInput.style.display = "none"; // Hide the search input
+      }
+    });
+
+    // Add search functionality
+    const searchInput = document.getElementById('memberSearch');
+    searchInput.addEventListener('keyup', function() {
+      const filter = searchInput.value.toLowerCase();
+      const rows = document.getElementById("data-table").getElementsByTagName("tr");
+
+      // Loop through all table rows (except the header row)
+      for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        let match = false;
+
+        // Loop through each cell in the row
+        for (let j = 0; j < cells.length; j++) {
+          if (cells[j].textContent.toLowerCase().indexOf(filter) > -1) {
+            match = true;
+            break;
+          }
+        }
+
+        // Show or hide the row based on the search input
+        rows[i].style.display = match ? "" : "none";
+      }
+    });
+
+    // Save button functionality
+    document.getElementById('save-button').addEventListener('click', () => {
+      const table = document.querySelector('table');
+      const data = [];
+      
+      for (const row of table.rows) {
+        const rowData = [];
+        for (const cell of row.cells) {
+          rowData.push(cell.textContent);
+        }
+        data.push(rowData);
+      }
+
+      const worksheet = XLSX.utils.aoa_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+      XLSX.writeFile(workbook, 'listaSocios.xlsx');
+      alert("Documento guardado como listaSocios.xlsx");
+    });
+  </script>
+</body>
+</html>

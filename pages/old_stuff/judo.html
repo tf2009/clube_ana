@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clube Ana</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9; /* Light background for contrast */
+    }
+    header {
+      background-color: #c8102e; /* Club color - red */
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative; /* Added relative positioning for the header */
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+    h2 {
+      margin: 20px 0; /* Increased margin for spacing */
+      font-size: 1.5em;
+      cursor: pointer; /* Change cursor to pointer for dropdowns */
+      display: inline-block; /* Ensure the button aligns with the header */
+    }
+    .dropdown {
+      display: none; /* Initially hide the dropdown menus */
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: 10px; /* Added margin for space between functionalities */
+    }
+    #addAthlete {
+      display: none; /* Initially hide the input fields */
+    }
+    input[type="text"], input[type="email"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #save-button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #save-button:hover {
+      background-color: #45a049;
+    }
+    #searchAthlete {
+      margin: 20px 0;
+      padding: 5px; /* Reduced padding */
+      font-size: 14px;
+      width: 40%; /* Reduced width */
+      max-width: 200px; /* Set a maximum width */
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    #homeButton {
+      position: absolute; /* Position it absolutely */
+      top: 30px; /* Adjusted distance from the top */
+      right: 20px; /* Distance from the right */
+      padding: 10px 20px;
+      background-color: #b71c1c; /* Darker red color for a better match */
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 5px; /* Rounded corners */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Added shadow for a button effect */
+      transition: background-color 0.3s; /* Smooth transition for hover effect */
+    }
+    #homeButton:hover {
+      background-color: #a10f24; /* Darker red for hover effect */
+    }
+    .dropdown-toggle {
+      margin-left: 10px; /* Space between header and dropdown button */
+      padding: 5px 10px;
+      background-color: #c8102e; /* Same red as header */
+      color: white;
+      border: none;
+      border-radius: 5px; /* Rounded corners */
+      cursor: pointer;
+    }
+    .dropdown-toggle:hover {
+      background-color: #a10f24; /* Darker red for hover effect */
+    }
+    /* Add spacing between each functionality */
+    .functionality {
+      margin-bottom: 30px; /* Increased space between functionalities */
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Modalidade - Judo</h1>
+    <button id="homeButton">Voltar à página inicial</button> <!-- Home button in the header -->
+  </header>
+
+  <div class="functionality">
+    <h2 onclick="toggleDropdown('searchDropdown')">Pesquisar</h2>
+    <button class="dropdown-toggle" onclick="toggleDropdown('searchDropdown')">▼</button>
+    <div id="searchDropdown" class="dropdown">
+      <input type="text" id="searchAthlete" placeholder="Procurar atleta por nome...">
+    </div>
+  </div>
+
+  <div class="functionality">
+    <h2 onclick="toggleDropdown('addDropdown')">Adicionar</h2>
+    <button class="dropdown-toggle" onclick="toggleDropdown('addDropdown')">▼</button>
+    <div id="addDropdown" class="dropdown">
+      <button id="toggleAddAthlete">Abrir/Fechar Menu</button>
+      <div id="addAthlete">
+        <input type="text" id="athleteName" placeholder="Nome" required>
+        <input type="text" id="athleteParents" placeholder="Pais" required>
+        <input type="text" id="athleteContact" placeholder="Contacto" required>
+        <textarea id="athleteComments" placeholder="Comentários"></textarea>
+        <button id="saveAthleteButton">Adicionar Atleta</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="functionality">
+    <h2 onclick="toggleDropdown('listDropdown')">Lista de atletas inscritos</h2>
+    <button class="dropdown-toggle" onclick="toggleDropdown('listDropdown')">▼</button>
+    <div id="listDropdown" class="dropdown">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Pais</th>
+            <th>Contacto</th>
+            <th>Comentários</th>
+          </tr>
+        </thead>
+        <tbody id="athleteTableBody">
+          <!-- Athlete rows will be dynamically added here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Go back to the main page when the home button is clicked
+    document.getElementById('homeButton').addEventListener('click', function() {
+      window.location.href = '../c_ana.html'; 
+    });
+
+    // Toggle visibility of the add athlete section
+    document.getElementById('toggleAddAthlete').addEventListener('click', function() {
+      const addAthleteDiv = document.getElementById('addAthlete');
+      addAthleteDiv.style.display = addAthleteDiv.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Function to add an athlete
+    document.getElementById('saveAthleteButton').addEventListener('click', function() {
+      const name = document.getElementById('athleteName').value;
+      const parents = document.getElementById('athleteParents').value;
+      const contact = document.getElementById('athleteContact').value;
+      const comments = document.getElementById('athleteComments').value;
+
+      // Validate input
+      if (name && parents && contact) {
+        // Create a new row for the athlete
+        const tableBody = document.getElementById('athleteTableBody');
+        const newRow = document.createElement('tr');
+
+        newRow.innerHTML = `
+          <td>${name}</td>
+          <td>${parents}</td>
+          <td>${contact}</td>
+          <td>${comments}</td>
+        `;
+
+        // Append the new row to the table body
+        tableBody.appendChild(newRow);
+
+        // Clear the input fields
+        document.getElementById('athleteName').value = '';
+        document.getElementById('athleteParents').value = '';
+        document.getElementById('athleteContact').value = '';
+        document.getElementById('athleteComments').value = '';
+      } else {
+        alert('Por favor, preencha todos os campos obrigatórios.');
+      }
+    });
+
+    // Function to filter athletes by name
+    document.getElementById('searchAthlete').addEventListener('keyup', function() {
+      const filter = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#athleteTableBody tr');
+
+      rows.forEach(row => {
+        const cells = row.getElementsByTagName("td");
+        let match = false;
+
+        for (let j = 0; j < cells.length; j++) {
+          if (cells[j].textContent.toLowerCase().indexOf(filter) > -1) {
+            match = true;
+            break;
+          }
+        }
+        row.style.display = match ? "" : "none";
+      });
+    });
+
+    // Function to toggle dropdown visibility
+    function toggleDropdown(dropdownId) {
+      const dropdown = document.getElementById(dropdownId);
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
+</body>
+</html>
