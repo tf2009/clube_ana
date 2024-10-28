@@ -1,4 +1,8 @@
-const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const monthNames = [
+    "January", "February", "March", "April", "May", "June", 
+    "July", "August", "September", "October", "November", "December"
+];
+
 let currentDate = new Date();
 const bookings = {}; // Use an object to store bookings by date
 let athletes = [];
@@ -97,7 +101,13 @@ function addAthlete() {
     const escalão = document.getElementById('athleteEscalao').value;
     const comments = document.getElementById('athleteComments').value;
 
-    const newAthlete = { nome: name, pais: parents, contacto: contact, escalao: escalão, comentarios: comments };
+    const newAthlete = { 
+        nome: name, 
+        pais: parents, 
+        contacto: contact, 
+        escalao: escalão, 
+        comentarios: comments 
+    };
     athletes.push(newAthlete);
     saveAthletes();
     renderAthleteLists(); // Re-render the athlete lists after adding a new athlete
@@ -194,8 +204,8 @@ document.getElementById("saveBookingButton").onclick = () => {
     const comment = document.getElementById("bookingComment").value;
 
     if (dateInput && start && end) {
-        // Create a date object from the input
-        const bookingDate = new Date(dateInput);
+        // Create a date object from the input, using local time
+        const bookingDate = new Date(dateInput + 'T00:00:00');
         const dateKey = bookingDate.toISOString().split('T')[0]; // Use ISO string for consistent format
 
         // Initialize the bookings array for the date if it doesn't exist
