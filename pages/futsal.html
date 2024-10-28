@@ -28,6 +28,7 @@
       margin: 20px 0; /* Removes auto centering to start from the left */
       font-size: 1.1em;
       /*background-color: #9fc2c6;*/
+      background-color:"lightblue";
       background-color: lightblue;
       padding: 10px 15px;
       border-radius: 20px;
@@ -66,7 +67,7 @@
       margin-top: 10px;
       width: 100%;
     }
-    
+
     .functionality {
       margin-bottom: 50px;
       width: 80%;
@@ -310,18 +311,18 @@
       for (const escalão in groupedAthletes) {
         const table = document.createElement('table');
         const headerRow = document.createElement('tr');
-        headerRow.innerHTML = <th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Ações</th>;
+        headerRow.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Ações</th>`;
         table.appendChild(headerRow);
         groupedAthletes[escalão].forEach((athlete, index) => {
           const row = document.createElement('tr');
-          row.innerHTML = 
+          row.innerHTML = `
             <td>${athlete.name}</td>
             <td>${athlete.parents}</td>
             <td>${athlete.contact}</td>
             <td>${athlete.escalão}</td>
             <td>${athlete.comments}</td>
             <td><span class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</span></td>
-          ;
+          `;
           table.appendChild(row);
         });
         athleteTables.appendChild(table);
@@ -395,7 +396,7 @@
       calendar.innerHTML = '';
       const month = currentDate.getMonth();
       const year = currentDate.getFullYear();
-      document.getElementById('currentMonth').innerText = ${monthNames[month]} ${year};
+      document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
 
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -410,15 +411,15 @@
         const dayDiv = document.createElement('div');
         dayDiv.className = 'day';
         dayDiv.innerText = day;
-        const date = ${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')};
-        
+        const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
         // Check for bookings on this date
         const bookingsForDay = bookings.filter(b => b.date === date);
         bookingsForDay.forEach(b => {
           const bookingDiv = document.createElement('div');
           bookingDiv.className = 'booking';
           bookingDiv.style.backgroundColor = b.color;
-          bookingDiv.innerText = ${b.startTime} - ${b.endTime} ${b.comment};
+          bookingDiv.innerText = `${b.startTime} - ${b.endTime} ${b.comment}`;
           dayDiv.appendChild(bookingDiv);
         });
 
