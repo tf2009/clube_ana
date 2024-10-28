@@ -106,13 +106,15 @@ function renderCalendar() {
     // Create day names row
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const dayNamesRow = document.createElement('div');
-    dayNamesRow.classList.add('day-header');
+    dayNamesRow.classList.add('day-names');
+
     dayNames.forEach(day => {
         const dayDiv = document.createElement('div');
         dayDiv.textContent = day;
         dayNamesRow.appendChild(dayDiv);
     });
-    calendarBody.appendChild(dayNamesRow);
+
+    calendarBody.appendChild(dayNamesRow); // Append the day names row
 
     let date = 1;
 
