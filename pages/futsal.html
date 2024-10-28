@@ -28,7 +28,6 @@
       margin: 20px 0; /* Removes auto centering to start from the left */
       font-size: 1.1em;
       /*background-color: #9fc2c6;*/
-      background-color:"lightblue";
       background-color: lightblue;
       padding: 10px 15px;
       border-radius: 20px;
@@ -396,6 +395,7 @@
       calendar.innerHTML = '';
       const month = currentDate.getMonth();
       const year = currentDate.getFullYear();
+      document.getElementById('Calendário -'+'currentMonth').innerText = `${monthNames[month]} ${year}`;
       document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
 
       const firstDay = new Date(year, month, 1).getDay();
