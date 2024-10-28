@@ -265,7 +265,8 @@
         return;
       }
 
-      const athlete = { name, parents, contact, escalão, comments };
+      //const athlete = { name, parents, contact, escalão, comments };
+      const athlete = { name, parents, contact, comments }; //vou remover o escalao p n duplicar info
       athletes.push(athlete);
       localStorage.setItem("athletes", JSON.stringify(athletes));
       clearAthleteForm();
@@ -301,6 +302,7 @@
 
       for (const escalão in athleteTables) {
         const table = document.createElement("table");
+        table.style.fontSize = "12px"
         table.innerHTML = `<tr><th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Ações</th></tr>`;
 
         athleteTables[escalão].forEach(athlete => {
