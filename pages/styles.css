@@ -25,7 +25,6 @@ h3 {
     margin: 5px 0; /* Reduced margin for consistency */
     font-size: 1.2em;
 }
-
 section {
     margin-bottom: 30px;
 }
@@ -79,6 +78,15 @@ form input {
     margin-bottom: 10px;
 }
 
+.day-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* Align with days of the week */
+    background-color: #f4f4f4;
+    text-align: center;
+    font-weight: bold;
+    padding: 5px 0;
+}
+
 .day-names {
     display: flex;
     width: 100%;
@@ -112,4 +120,41 @@ form input {
     position: absolute; /* Positioned inside the day */
     bottom: 5px; /* Align at the bottom */
     width: calc(100% - 4px); /* Full width minus border */
+}
+
+/* Additional styles for booking form */
+.booking-form {
+    margin-top: 20px;
+}
+
+.booking-form input,
+.booking-form select {
+    margin: 5px 0; /* Spacing between inputs */
+    padding: 8px;
+    width: 200px; /* Fixed width for inputs */
+}
+
+.booking-form button {
+    padding: 10px 15px;
+    background-color: #c8102e; /* Consistent with header color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.booking-form button:hover {
+    background-color: #b00c28; /* Darker shade on hover */
+}
+
+/* Style for removing athletes */
+.remove-athlete {
+    color: #c8102e;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.remove-athlete:hover {
+    color: #a40b1e; /* Darker shade on hover */
 }

@@ -106,7 +106,7 @@ function renderCalendar() {
     // Create day names row
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const dayNamesRow = document.createElement('div');
-    dayNamesRow.classList.add('day-names');
+    dayNamesRow.classList.add('day-header');
     dayNames.forEach(day => {
         const dayDiv = document.createElement('div');
         dayDiv.textContent = day;
