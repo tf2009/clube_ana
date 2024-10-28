@@ -23,10 +23,10 @@
       font-size: 2.3em;
     }
     #club-logo {
-      position: absolute; /* Change to absolute */
-      top: 10px; /* Adjust the value as needed */
-      left: 20px; /* Adjust the value as needed */
-      height: 60px; /* Optional: Set a height for consistency */
+    position: absolute; /* Change to absolute */
+    top: 10px; /* Adjust the value as needed */
+    left: 20px; /* Adjust the value as needed */
+    height: 60px; /* Optional: Set a height for consistency */
     }
     #homeButton {
       position: absolute;
@@ -79,7 +79,7 @@
       width: 60%; /* Increased width for textarea */
     }
     #bookingDate, #bookingStartTime, #bookingEndTime {
-      width: 8%; /* Make the date input smaller */
+      width: 10%;
     }
     #saveBookingButton, #saveAthleteButton {
       padding: 10px 20px;
@@ -241,26 +241,67 @@
       localStorage.setItem('athletes', JSON.stringify(athletes));
     }
 
+    function renderAthleteLists() {
+      const athleteListContainer = document.getElementById('athleteListContainer');
+      athleteListContainer.innerHTML = '';
+
+      const groupedAthletes = athletes.reduce((acc, athlete) => {
+        if (!acc[athlete.escalao]) {
+          acc[athlete.escalao] = [];
+        }
+        acc[athlete.escalao].push(athlete);
+        return acc;
+      }, {});
+
+      for (const [escalão, athleteGroup] of Object.entries(groupedAthletes)) {
+        const table = document.createElement('table');
+        // Set the background color based on escalão
+        table.style.backgroundColor = escalãoColors[escalão] || "#ffffff"; // Default to white if escalão not found
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Pais</th>
+              <th>Contacto</th>
+              <th>Escalão</th>
+              <th>Comentários</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        `;
+        const tbody = table.querySelector('tbody');
+
+        athleteGroup.forEach((athlete, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${athlete.name}</td>
+            <td>${athlete.parents}</td>
+            <td>${athlete.contact}</td>
+            <td>${athlete.escalao}</td>
+            <td>${athlete.comments}</td>
+            <td><span class="remove-athlete" onclick="removeAthlete(${athletes.indexOf(athlete)})">Remover</span></td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        athleteListContainer.appendChild(table);
+      }
+    }
+
     function addAthlete() {
       const name = document.getElementById('athleteName').value;
       const parents = document.getElementById('athleteParents').value;
       const contact = document.getElementById('athleteContact').value;
-      const escalão = document.getElementById('athleteEscalao').value;
+      const escalao = document.getElementById('athleteEscalao').value;
       const comments = document.getElementById('athleteComments').value;
 
-      const athlete = {
-        name,
-        parents,
-        contact,
-        escalão,
-        comments,
-      };
-
-      athletes.push(athlete);
-      saveAthletes();
+      athletes.push({ name, parents, contact, escalao, comments });
+      saveAthletes(); // Save to local storage
       renderAthleteLists();
 
-      // Clear input fields
+      // Reset input fields
       document.getElementById('athleteName').value = '';
       document.getElementById('athleteParents').value = '';
       document.getElementById('athleteContact').value = '';
@@ -270,41 +311,62 @@
 
     function removeAthlete(index) {
       athletes.splice(index, 1);
-      saveAthletes();
+      saveAthletes(); // Save updated list to local storage
       renderAthleteLists();
     }
 
-    function renderAthleteLists() {
+    function searchAthlete() {
+      const query = document.getElementById('searchAthlete').value.toLowerCase();
+      const filteredAthletes = athletes.filter(athlete => athlete.name.toLowerCase().includes(query));
+      renderFilteredAthleteList(filteredAthletes);
+    }
+
+    function renderFilteredAthleteList(filteredAthletes) {
       const athleteListContainer = document.getElementById('athleteListContainer');
       athleteListContainer.innerHTML = '';
 
-      // Group athletes by escalão
-      const groupedAthletes = athletes.reduce((acc, athlete) => {
-        (acc[athlete.escalão] = acc[athlete.escalão] || []).push(athlete);
+      const groupedFilteredAthletes = filteredAthletes.reduce((acc, athlete) => {
+        if (!acc[athlete.escalao]) {
+          acc[athlete.escalao] = [];
+        }
+        acc[athlete.escalao].push(athlete);
         return acc;
       }, {});
 
-      for (const escalão in groupedAthletes) {
-        const section = document.createElement('div');
-        section.innerHTML = `<h3 style="color:${escalãoColors[escalão] || '#000'}">${escalão}</h3>`;
+      for (const [escalão, athleteGroup] of Object.entries(groupedFilteredAthletes)) {
         const table = document.createElement('table');
-        table.innerHTML = `<tr><th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Ações</th></tr>`;
+        // Set the background color based on escalão
+        table.style.backgroundColor = escalãoColors[escalão] || "#ffffff"; // Default to white if escalão not found
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Pais</th>
+              <th>Contacto</th>
+              <th>Escalão</th>
+              <th>Comentários</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        `;
+        const tbody = table.querySelector('tbody');
 
-        groupedAthletes[escalão].forEach((athlete, index) => {
+        athleteGroup.forEach((athlete, index) => {
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>${athlete.name}</td>
             <td>${athlete.parents}</td>
             <td>${athlete.contact}</td>
-            <td>${athlete.escalão}</td>
+            <td>${athlete.escalao}</td>
             <td>${athlete.comments}</td>
-            <td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td>
+            <td><span class="remove-athlete" onclick="removeAthlete(${athletes.indexOf(athlete)})">Remover</span></td>
           `;
-          table.appendChild(row);
+          tbody.appendChild(row);
         });
 
-        section.appendChild(table);
-        athleteListContainer.appendChild(section);
+        athleteListContainer.appendChild(table);
       }
     }
 
@@ -315,17 +377,11 @@
       const color = document.getElementById('bookingColor').value;
       const comment = document.getElementById('bookingComment').value;
 
-      const booking = {
-        date,
-        startTime,
-        endTime,
-        color,
-        comment
-      };
-
+      const booking = { date, startTime, endTime, color, comment };
       bookings.push(booking);
       renderCalendar();
-      // Clear booking inputs
+      
+      // Reset booking inputs
       document.getElementById('bookingDate').value = '';
       document.getElementById('bookingStartTime').value = '';
       document.getElementById('bookingEndTime').value = '';
@@ -336,21 +392,23 @@
     function renderCalendar() {
       const calendar = document.getElementById('calendar');
       calendar.innerHTML = '';
-
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
 
+      document.getElementById('currentMonth').textContent = monthNames[month] + ' ' + year;
+
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
+      const startDay = firstDay.getDay(); // Day of week (0-6, Sunday-Saturday)
       const totalDays = lastDay.getDate();
 
-      // Add day names
+      // Create day names
       const dayNames = document.createElement('div');
       dayNames.className = 'day-names';
-      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
-        const dayDiv = document.createElement('div');
-        dayDiv.innerText = day;
-        dayNames.appendChild(dayDiv);
+      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(name => {
+        const dayName = document.createElement('div');
+        dayName.textContent = name;
+        dayNames.appendChild(dayName);
       });
       calendar.appendChild(dayNames);
 
@@ -358,81 +416,62 @@
       let week = document.createElement('div');
       week.className = 'week';
 
-      // Fill in empty days at the start of the month
-      for (let i = 0; i < firstDay.getDay(); i++) {
+      // Add empty days for the start of the month
+      for (let i = 0; i < startDay; i++) {
         const emptyDay = document.createElement('div');
+        emptyDay.className = 'day'; // Maintain class for styling
         week.appendChild(emptyDay);
       }
 
-      // Create day cells
+      // Create days
       for (let day = 1; day <= totalDays; day++) {
+        const date = new Date(year, month, day);
         const dayDiv = document.createElement('div');
         dayDiv.className = 'day';
-        dayDiv.innerText = day;
+        dayDiv.textContent = day;
 
-        // Check for bookings on this day
-        const dateString = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-        const dayBookings = bookings.filter(booking => booking.date === dateString);
-
-        dayBookings.forEach(booking => {
-          const bookingDiv = document.createElement('div');
-          bookingDiv.className = 'booking';
-          bookingDiv.style.backgroundColor = booking.color;
-          bookingDiv.innerText = `${booking.startTime} - ${booking.endTime} (${booking.comment})`;
-          dayDiv.appendChild(bookingDiv);
+        // Display bookings for this day
+        bookings.forEach(booking => {
+          if (booking.date === date.toISOString().split('T')[0]) {
+            const bookingDiv = document.createElement('div');
+            bookingDiv.className = 'booking';
+            bookingDiv.style.backgroundColor = booking.color;
+            bookingDiv.textContent = `${booking.startTime} - ${booking.endTime} ${booking.comment}`;
+            dayDiv.appendChild(bookingDiv);
+          }
         });
 
         week.appendChild(dayDiv);
-
-        // Move to the next week if necessary
-        if (firstDay.getDay() === 6) {
+        
+        // Start a new week if it's the last day of the week
+        if ((startDay + day) % 7 === 0) {
           calendar.appendChild(week);
           week = document.createElement('div');
           week.className = 'week';
         }
-        firstDay.setDate(firstDay.getDate() + 1);
       }
 
-      // Add the last week to the calendar
+      // Fill in the last week if not complete
       if (week.children.length > 0) {
         calendar.appendChild(week);
       }
-
-      // Update current month display
-      document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
     }
 
-    function changeMonth(delta) {
-      currentDate.setMonth(currentDate.getMonth() + delta);
+    function changeMonth(direction) {
+      currentDate.setMonth(currentDate.getMonth() + direction);
       renderCalendar();
     }
 
     function toggleDropdown(dropdownId) {
       const dropdown = document.getElementById(dropdownId);
-      dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ? 'block' : 'none';
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     }
 
-    function searchAthlete() {
-      const filter = document.getElementById('searchAthlete').value.toLowerCase();
-      const sections = document.querySelectorAll('#athleteListContainer > div');
-      sections.forEach(section => {
-        const athletes = section.querySelectorAll('tr');
-        athletes.forEach(athleteRow => {
-          const nameCell = athleteRow.querySelector('td:first-child');
-          if (nameCell && nameCell.textContent.toLowerCase().includes(filter)) {
-            athleteRow.style.display = '';
-          } else {
-            athleteRow.style.display = 'none';
-          }
-        });
-      });
-    }
+    // Load athletes when the page loads
+    window.onload = loadAthletes;
 
-    // Load athletes on page load
-    window.onload = () => {
-      loadAthletes();
-      renderCalendar();
-    };
+    // Initial render for calendar
+    renderCalendar();
   </script>
 </body>
 </html>
