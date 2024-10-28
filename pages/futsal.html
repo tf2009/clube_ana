@@ -306,65 +306,71 @@
     }
 
     function renderCalendar() {
-      const calendar = document.getElementById('calendar');
-      const month = currentDate.getMonth();
-      const year = currentDate.getFullYear();
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
-      const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
+    const calendar = document.getElementById('calendar');
+    const month = currentDate.getMonth();
+    const year = currentDate.getFullYear();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
 
-      // Clear calendar
-      calendar.innerHTML = '';
+    // Clear calendar
+    calendar.innerHTML = '';
 
-      // Display month and year
-      document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+    // Display month and year
+    document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
 
-      // Render day names
-      const dayNamesRow = document.createElement('div');
-      dayNamesRow.className = 'day-names';
-      dayNames.forEach(name => {
-          const dayNameDiv = document.createElement('div');
-          dayNameDiv.textContent = name;
-          dayNamesRow.appendChild(dayNameDiv);
-      });
-      calendar.appendChild(dayNamesRow);
+    // Render day names
+    const dayNamesRow = document.createElement('div');
+    dayNamesRow.className = 'day-names';
+    dayNames.forEach(name => {
+        const dayNameDiv = document.createElement('div');
+        dayNameDiv.textContent = name;
+        dayNamesRow.appendChild(dayNameDiv);
+    });
+    calendar.appendChild(dayNamesRow);
 
-      // Render weeks
-      let weekRow = document.createElement('div');
-      weekRow.className = 'week';
-      for (let i = 0; i < firstDay.getDay(); i++) {
-          const emptyDiv = document.createElement('div');
-          weekRow.appendChild(emptyDiv);
-      }
-
-      for (let day = 1; day <= lastDay.getDate(); day++) {
-          const dayDiv = document.createElement('div');
-          dayDiv.textContent = day;
-          dayDiv.className = 'day';
-
-          // Render bookings for that day
-          const dayBookings = bookings.filter(booking => new Date(booking.date).getDate() === day && new Date(booking.date).getMonth() === month && new Date(booking.date).getFullYear() === year);
-          dayBookings.forEach(booking => {
-              const bookingDiv = document.createElement('div');
-              bookingDiv.className = 'booking';
-              bookingDiv.style.backgroundColor = booking.color; // Set background color
-              bookingDiv.textContent = booking.comment;
-              dayDiv.appendChild(bookingDiv);
-          });
-
-          weekRow.appendChild(dayDiv);
-          if (weekRow.childNodes.length === 7) {
-              calendar.appendChild(weekRow);
-              weekRow = document.createElement('div'); // Reset for the next week
-              weekRow.className = 'week';
-          }
-      }
-
-      // Append any remaining days in the last week
-      if (weekRow.childNodes.length > 0) {
-          calendar.appendChild(weekRow);
-      }
+    // Render weeks
+    let weekRow = document.createElement('div');
+    weekRow.className = 'week';
+    
+    for (let i = 0; i < firstDay.getDay(); i++) {
+        const emptyDiv = document.createElement('div');
+        weekRow.appendChild(emptyDiv);
     }
+
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.textContent = day;
+        dayDiv.className = 'day';
+
+        // Render bookings for that day
+        const dayBookings = bookings.filter(booking => 
+            new Date(booking.date).getDate() === day &&
+            new Date(booking.date).getMonth() === month &&
+            new Date(booking.date).getFullYear() === year
+        );
+        
+        dayBookings.forEach(booking => {
+            const bookingDiv = document.createElement('div');
+            bookingDiv.className = 'booking';
+            bookingDiv.style.backgroundColor = booking.color; // Set background color
+            bookingDiv.textContent = booking.comment;
+            dayDiv.appendChild(bookingDiv);
+        });
+
+        weekRow.appendChild(dayDiv);
+        if (weekRow.childNodes.length === 7) {
+            calendar.appendChild(weekRow);
+            weekRow = document.createElement('div'); // Reset for the next week
+            weekRow.className = 'week';
+        }
+    }
+
+    // Append any remaining days in the last week
+    if (weekRow.childNodes.length > 0) {
+        calendar.appendChild(weekRow);
+    }
+}
 
     function changeMonth(direction) {
       currentDate.setMonth(currentDate.getMonth() + direction);
