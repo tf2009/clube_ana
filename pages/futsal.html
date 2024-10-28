@@ -395,7 +395,6 @@
       calendar.innerHTML = '';
       const month = currentDate.getMonth();
       const year = currentDate.getFullYear();
-      document.getElementById('Calendário -'+'currentMonth').innerText = `${monthNames[month]} ${year}`;
       document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
 
       const firstDay = new Date(year, month, 1).getDay();
