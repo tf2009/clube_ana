@@ -47,12 +47,12 @@
       cursor: pointer;
       margin: 20px 0;
       font-size: 1.1em;
-      background-color: #e0e0e0;
+      background-color: #9fc2c6;
       padding: 5px 20px;
       border-radius: 5px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: right;
     }
     .dropdown {
       display: none;
@@ -265,8 +265,8 @@
         return;
       }
 
-      //const athlete = { name, parents, contact, escalão, comments };
-      const athlete = { name, parents, contact, comments }; //vou remover o escalao p n duplicar info
+      const athlete = { name, parents, contact, escalão, comments };
+      //const athlete = { name, parents, contact, comments }; //vou remover o escalao p n duplicar info
       athletes.push(athlete);
       localStorage.setItem("athletes", JSON.stringify(athletes));
       clearAthleteForm();
