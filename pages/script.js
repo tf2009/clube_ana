@@ -103,6 +103,17 @@ function renderCalendar() {
     const calendarBody = document.getElementById('calendar');
     calendarBody.innerHTML = ''; // Clear previous calendar
 
+    // Create day names row
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayNamesRow = document.createElement('div');
+    dayNamesRow.classList.add('day-names');
+    dayNames.forEach(day => {
+        const dayDiv = document.createElement('div');
+        dayDiv.textContent = day;
+        dayNamesRow.appendChild(dayDiv);
+    });
+    calendarBody.appendChild(dayNamesRow);
+
     let date = 1;
 
     // Create 6 rows to cover all possible weeks in a month
