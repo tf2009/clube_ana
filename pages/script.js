@@ -6,15 +6,10 @@ let athletes = [];
 // Define colors for each escalão
 const escalãoColors = {
     "Infantis": "#d1e7dd",
-    "infantis": "#d1e7dd",
-    "Iniciados": "#fff3cd",
     "iniciados": "#fff3cd",
     "Juvenis": "#cfe2ff",
-    "juvenis": "#cfe2ff",
-    "Juniores": "#f9cb9c",
     "juniores": "#f9cb9c",
-    "Seniores": "#e6a9e3",
-    "seniores": "#e6a9e3"
+    "Seniores": "#e6a9e3"
 };
 
 // Load athletes from local storage
@@ -184,8 +179,6 @@ document.getElementById("saveBookingButton").onclick = () => {
     if (dateInput && start && end) {
         // Create a date object from the input
         const bookingDate = new Date(dateInput);
-        // Use local date by setting the time to the start of the day
-        bookingDate.setHours(0, 0, 0, 0);
         const dateKey = bookingDate.toISOString().split('T')[0]; // Use ISO string for consistent format
 
         // Initialize the bookings array for the date if it doesn't exist
