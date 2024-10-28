@@ -1,6 +1,6 @@
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 let currentDate = new Date();
-const bookings = [];
+const bookings = {};
 let athletes = [];
 
 // Define colors for each escalão
@@ -134,16 +134,16 @@ function renderCalendar() {
                 dayCell.textContent = date;
 
                 // Show bookings for the current day
-                bookings.forEach(booking => {
-                    const bookingDate = new Date(booking.date);
-                    if (bookingDate.getDate() === date && bookingDate.getMonth() === currentMonth && bookingDate.getFullYear() === currentYear) {
+                const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                if (bookings[dateKey]) {
+                    bookings[dateKey].forEach(booking => {
                         const bookingDiv = document.createElement("div");
                         bookingDiv.className = "booking";
                         bookingDiv.style.backgroundColor = booking.color; // Set background color from booking
                         bookingDiv.textContent = `${booking.start} - ${booking.end}: ${booking.comment}`; // Show time slot and comment
                         dayCell.appendChild(bookingDiv);
-                    }
-                });
+                    });
+                }
 
                 dayCell.onclick = () => {
                     alert(`Selected date: ${date} ${monthNames[currentMonth]} ${currentYear}`);
@@ -180,13 +180,19 @@ document.getElementById("saveBookingButton").onclick = () => {
     const comment = document.getElementById("bookingComment").value;
 
     if (dateInput && start && end) {
-        // Create a date object from the input and ensure it's a local date
+        // Create a date object from the input
         const bookingDate = new Date(dateInput);
         // Use local date by setting the time to the start of the day
         bookingDate.setHours(0, 0, 0, 0);
+        const dateKey = bookingDate.toISOString().split('T')[0]; // Use ISO string for consistent format
 
-        bookings.push({ 
-            date: bookingDate.toISOString().split('T')[0], // Store only the date part
+        // Initialize the bookings array for the date if it doesn't exist
+        if (!bookings[dateKey]) {
+            bookings[dateKey] = [];
+        }
+
+        // Push new booking
+        bookings[dateKey].push({ 
             start, 
             end, 
             color, 
