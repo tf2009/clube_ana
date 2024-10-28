@@ -187,25 +187,9 @@
   </div>
 
   <div class="functionality">
-    <h2 onclick="toggleDropdown('listDropdown')">
-      Atletas inscritos <span>▼</span>
-    </h2>
-    <div id="listDropdown" class="dropdown">
-      <div id="athleteListContainer">
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Pais</th>
-              <th>Contacto</th>
-              <th>Escalão</th>
-              <th>Comentários</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody id="athleteList"></tbody>
-        </table>
-      </div> <!-- Container for athlete lists by escalão -->
+    <h2>Atletas inscritos</h2>
+    <div id="athleteListContainer">
+      <div id="athleteTables"></div> <!-- Container for athlete lists by escalão -->
     </div>
   </div>
 
@@ -252,6 +236,7 @@
     window.onload = function() {
       loadAthletes();
       loadBookings();
+      renderAthleteTables(); // Render tables for athletes on load
       renderCalendar();
       updateMonthLabel();
     };
@@ -272,7 +257,7 @@
         const athlete = { name, parents, contact, escalão, comments };
         athletes.push(athlete);
         saveAthletes();
-        renderAthleteList();
+        renderAthleteTables(); // Re-render tables after adding a new athlete
         clearAthleteForm();
       } else {
         alert("Por favor, preencha todos os campos obrigatórios.");
@@ -287,26 +272,56 @@
       document.getElementById("athleteComments").value = '';
     }
 
-    function renderAthleteList() {
-      const athleteList = document.getElementById("athleteList");
-      athleteList.innerHTML = ''; // Clear existing list
-      athletes.forEach((athlete, index) => {
-        const row = `<tr>
-          <td>${athlete.name}</td>
-          <td>${athlete.parents}</td>
-          <td>${athlete.contact}</td>
-          <td>${athlete.escalão}</td>
-          <td>${athlete.comments}</td>
-          <td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td>
+    function renderAthleteTables() {
+      const athleteTablesContainer = document.getElementById("athleteTables");
+      athleteTablesContainer.innerHTML = ''; // Clear existing tables
+
+      // Group athletes by escalão
+      const athletesByEscalao = athletes.reduce((acc, athlete) => {
+        if (!acc[athlete.escalão]) {
+          acc[athlete.escalão] = [];
+        }
+        acc[athlete.escalão].push(athlete);
+        return acc;
+      }, {});
+
+      // Create a table for each escalão
+      for (const escalão in athletesByEscalao) {
+        const table = document.createElement("table");
+        const headerRow = `<tr>
+          <th>Nome</th>
+          <th>Pais</th>
+          <th>Contacto</th>
+          <th>Escalão</th>
+          <th>Comentários</th>
+          <th>Ações</th>
         </tr>`;
-        athleteList.innerHTML += row;
-      });
+        table.innerHTML = headerRow;
+
+        athletesByEscalao[escalão].forEach((athlete, index) => {
+          const row = `<tr>
+            <td>${athlete.name}</td>
+            <td>${athlete.parents}</td>
+            <td>${athlete.contact}</td>
+            <td>${athlete.escalão}</td>
+            <td>${athlete.comments}</td>
+            <td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td>
+          </tr>`;
+          table.innerHTML += row;
+        });
+
+        // Append the table to the container
+        const tableHeader = document.createElement("h3");
+        tableHeader.innerText = `Escalão: ${escalão}`;
+        athleteTablesContainer.appendChild(tableHeader);
+        athleteTablesContainer.appendChild(table);
+      }
     }
 
     function removeAthlete(index) {
       athletes.splice(index, 1);
       saveAthletes();
-      renderAthleteList();
+      renderAthleteTables(); // Re-render tables after removing an athlete
     }
 
     function saveAthletes() {
@@ -404,19 +419,49 @@
     function searchAthlete() {
       const input = document.getElementById("searchAthlete").value.toLowerCase();
       const filteredAthletes = athletes.filter(athlete => athlete.name.toLowerCase().includes(input));
-      const athleteList = document.getElementById("athleteList");
-      athleteList.innerHTML = '';
-      filteredAthletes.forEach((athlete, index) => {
-        const row = `<tr>
-          <td>${athlete.name}</td>
-          <td>${athlete.parents}</td>
-          <td>${athlete.contact}</td>
-          <td>${athlete.escalão}</td>
-          <td>${athlete.comments}</td>
-          <td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td>
+      const athleteTablesContainer = document.getElementById("athleteTables");
+      athleteTablesContainer.innerHTML = ''; // Clear current tables
+
+      // Group filtered athletes by escalão
+      const athletesByEscalao = filteredAthletes.reduce((acc, athlete) => {
+        if (!acc[athlete.escalão]) {
+          acc[athlete.escalão] = [];
+        }
+        acc[athlete.escalão].push(athlete);
+        return acc;
+      }, {});
+
+      // Create a table for each escalão
+      for (const escalão in athletesByEscalao) {
+        const table = document.createElement("table");
+        const headerRow = `<tr>
+          <th>Nome</th>
+          <th>Pais</th>
+          <th>Contacto</th>
+          <th>Escalão</th>
+          <th>Comentários</th>
+          <th>Ações</th>
         </tr>`;
-        athleteList.innerHTML += row;
-      });
+        table.innerHTML = headerRow;
+
+        athletesByEscalao[escalão].forEach((athlete, index) => {
+          const row = `<tr>
+            <td>${athlete.name}</td>
+            <td>${athlete.parents}</td>
+            <td>${athlete.contact}</td>
+            <td>${athlete.escalão}</td>
+            <td>${athlete.comments}</td>
+            <td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td>
+          </tr>`;
+          table.innerHTML += row;
+        });
+
+        // Append the table to the container
+        const tableHeader = document.createElement("h3");
+        tableHeader.innerText = `Escalão: ${escalão}`;
+        athleteTablesContainer.appendChild(tableHeader);
+        athleteTablesContainer.appendChild(table);
+      }
     }
   </script>
 </body>
