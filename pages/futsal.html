@@ -5,170 +5,143 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clube Ana - Futsal</title>
   <style>
-    /* General styling */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
-      color: #333;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px;
-      background-color: #ff6666;
-      color: white;
-    }
-    h1 {
-      margin: 0;
-      font-size: 1.8em;
-    }
-    #homeButton {
-      background-color: white;
-      color: #ff6666;
-      border: none;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-size: 1em;
-    }
-    #homeButton:hover {
-      background-color: #ffeeee;
-    }
-    .functionality {
-      margin: 20px;
-      background-color: white;
-      padding: 15px;
-      border-radius: 5px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    }
-    h2 {
-      margin: 0;
-      cursor: pointer;
-    }
-    .dropdown {
-      display: none;
-      margin-top: 10px;
-    }
-    input, textarea, button {
-      display: block;
-      width: calc(100% - 20px);
-      padding: 10px;
-      margin: 5px 0;
-      font-size: 1em;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-    }
-    button {
-      background-color: #ff6666;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #ff3333;
-    }
-    #athleteListContainerFutsal div {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
+    /* General Styles */
+    body { font-family: 'Courier New', Courier, monospace; margin: 20px; background-color: #f9f9f9; }
+    header { background-color: #c8102e; color: white; padding: 20px; text-align: center; position: relative; }
+    h1 { margin: 0; font-size: 2.3em; }
+    #club-logo { position: absolute; top: 10px; left: 20px; height: 60px; }
+    #homeButton { position: absolute; right: 20px; top: 20px; padding: 10px 20px; background-color: #c8102e; color: white; border: none; cursor: pointer; border-radius: 4px; }
+    h2 { cursor: pointer; margin: 20px 0; font-size: 1.3em; background-color: #e0e0e0; padding: 5px 20px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
+    .dropdown { display: none; padding: 10px; background-color: #fff; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px; width: 100%; }
+    .functionality { margin-bottom: 30px; width: 100%; }
+    input, textarea { padding: 5px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; width: 20%; }
+    #searchAthlete { width: 20%; }
+    textarea { height: 50px; vertical-align: middle; width: 60%; }
+    #bookingDate, #bookingStartTime, #bookingEndTime { width: 10%; }
+    #saveBookingButton, #saveAthleteButton { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 30px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f4f4f4; }
+    .remove-athlete { cursor: pointer; color: red; font-size: 0.9em; }
   </style>
 </head>
 <body>
   <header>
-    <img id="club-logo" src="../images/c_ana.jpg" alt="Clube Ana Logo" title="Clube Ana" width="50">
+    <img id="club-logo" src="../images/c_ana.jpg" alt="Clube Ana Logo" title="Clube Ana">
     <h1>Modalidade - Futsal</h1>
     <button id="homeButton" onclick="window.location.href='../index.html'">Voltar à página inicial</button>
   </header>
 
+  <!-- Functionality Sections -->
   <div class="functionality">
-    <h2 onclick="toggleDropdown('searchDropdownFutsal')">Procurar atleta de Futsal <span>▼</span></h2>
-    <div id="searchDropdownFutsal" class="dropdown">
-      <input type="text" id="searchAthleteFutsal" placeholder="Procurar atleta por nome..." onkeyup="searchAthleteFutsal()">
+    <h2 onclick="toggleDropdown('searchDropdown')">Procurar atleta <span>▼</span></h2>
+    <div id="searchDropdown" class="dropdown">
+      <input type="text" id="searchAthlete" placeholder="Procurar atleta por nome..." onkeyup="searchFutsalAthlete()">
     </div>
   </div>
 
   <div class="functionality">
-    <h2 onclick="toggleDropdown('addDropdownFutsal')">Adicionar atleta de Futsal <span>▼</span></h2>
-    <div id="addDropdownFutsal" class="dropdown">
-      <input type="text" id="athleteNameFutsal" placeholder="Nome" required>
-      <input type="text" id="athleteParentsFutsal" placeholder="Pais" required>
-      <input type="text" id="athleteContactFutsal" placeholder="Contacto" required>
-      <input type="text" id="athleteEscalaoFutsal" placeholder="Escalão" required>
-      <textarea id="athleteCommentsFutsal" placeholder="Comentários"></textarea>
-      <button id="saveAthleteButtonFutsal" onclick="addAthleteFutsal()">Adicionar Atleta</button>
+    <h2 onclick="toggleDropdown('addDropdown')">Adicionar atleta <span>▼</span></h2>
+    <div id="addDropdown" class="dropdown">
+      <input type="text" id="athleteName" placeholder="Nome" required>
+      <input type="text" id="athleteParents" placeholder="Pais" required>
+      <input type="text" id="athleteContact" placeholder="Contacto" required>
+      <input type="text" id="athleteEscalao" placeholder="Escalão" required>
+      <textarea id="athleteComments" placeholder="Comentários"></textarea>
+      <button id="saveAthleteButton" onclick="addFutsalAthlete()">Adicionar Atleta</button>
     </div>
   </div>
 
   <div class="functionality">
-    <h2 onclick="toggleDropdown('listDropdownFutsal')">Atletas de Futsal inscritos <span>▼</span></h2>
-    <div id="listDropdownFutsal" class="dropdown">
-      <div id="athleteListContainerFutsal"></div>
+    <h2 onclick="toggleDropdown('listDropdown')">Atletas inscritos <span>▼</span></h2>
+    <div id="listDropdown" class="dropdown">
+      <div id="athleteListContainer"></div> <!-- Container for athlete lists by escalão -->
     </div>
   </div>
 
   <script>
-    let athletesFutsal = [];
+    let futsalAthletes = [];
 
-    function loadAthletesFutsal() {
-      const storedAthletes = localStorage.getItem('athletesFutsal');
-      if (storedAthletes) athletesFutsal = JSON.parse(storedAthletes);
-      renderAthleteListFutsal();
+    function loadFutsalAthletes() {
+      const storedAthletes = localStorage.getItem('futsalAthletes');
+      if (storedAthletes) {
+        futsalAthletes = JSON.parse(storedAthletes);
+      }
+      renderFutsalAthleteList();
     }
 
-    function saveAthletesFutsal() {
-      localStorage.setItem('athletesFutsal', JSON.stringify(athletesFutsal));
+    function saveFutsalAthletes() {
+      localStorage.setItem('futsalAthletes', JSON.stringify(futsalAthletes));
     }
 
-    function addAthleteFutsal() {
-      const name = document.getElementById('athleteNameFutsal').value;
-      const parents = document.getElementById('athleteParentsFutsal').value;
-      const contact = document.getElementById('athleteContactFutsal').value;
-      const escalao = document.getElementById('athleteEscalaoFutsal').value;
-      const comments = document.getElementById('athleteCommentsFutsal').value;
+    function addFutsalAthlete() {
+      const name = document.getElementById('athleteName').value;
+      const parents = document.getElementById('athleteParents').value;
+      const contact = document.getElementById('athleteContact').value;
+      const escalao = document.getElementById('athleteEscalao').value;
+      const comments = document.getElementById('athleteComments').value;
 
-      athletesFutsal.push({ name, parents, contact, escalao, comments });
-      saveAthletesFutsal();
-      renderAthleteListFutsal();
-      
-      document.getElementById('athleteNameFutsal').value = '';
-      document.getElementById('athleteParentsFutsal').value = '';
-      document.getElementById('athleteContactFutsal').value = '';
-      document.getElementById('athleteEscalaoFutsal').value = '';
-      document.getElementById('athleteCommentsFutsal').value = '';
+      futsalAthletes.push({ name, parents, contact, escalao, comments });
+      saveFutsalAthletes();
+      renderFutsalAthleteList();
+
+      document.getElementById('athleteName').value = '';
+      document.getElementById('athleteParents').value = '';
+      document.getElementById('athleteContact').value = '';
+      document.getElementById('athleteEscalao').value = '';
+      document.getElementById('athleteComments').value = '';
     }
 
-    function renderAthleteListFutsal() {
-      const container = document.getElementById('athleteListContainerFutsal');
-      container.innerHTML = athletesFutsal.map(athlete => `
-        <div>
-          <strong>Nome:</strong> ${athlete.name} - <strong>Escalão:</strong> ${athlete.escalao} - 
-          <button onclick="removeAthleteFutsal('${athlete.name}')">Remover</button>
-        </div>
-      `).join('');
+    function renderFutsalAthleteList() {
+      const athleteListContainer = document.getElementById('athleteListContainer');
+      athleteListContainer.innerHTML = '';
+
+      futsalAthletes.forEach((athlete, index) => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <strong>Nome:</strong> ${athlete.name} | <strong>Pais:</strong> ${athlete.parents} | 
+          <strong>Contacto:</strong> ${athlete.contact} | <strong>Escalão:</strong> ${athlete.escalao} | 
+          <strong>Comentários:</strong> ${athlete.comments} 
+          <button onclick="removeFutsalAthlete(${index})">Remover</button>
+        `;
+        athleteListContainer.appendChild(div);
+      });
     }
 
-    function removeAthleteFutsal(name) {
-      athletesFutsal = athletesFutsal.filter(athlete => athlete.name !== name);
-      saveAthletesFutsal();
-      renderAthleteListFutsal();
+    function removeFutsalAthlete(index) {
+      futsalAthletes.splice(index, 1);
+      saveFutsalAthletes();
+      renderFutsalAthleteList();
     }
 
-    function searchAthleteFutsal() {
-      const query = document.getElementById('searchAthleteFutsal').value.toLowerCase();
-      const filteredAthletes = athletesFutsal.filter(athlete => athlete.name.toLowerCase().includes(query));
-      document.getElementById('athleteListContainerFutsal').innerHTML = filteredAthletes.map(athlete => `
-        <div>
-          <strong>Nome:</strong> ${athlete.name} - <strong>Escalão:</strong> ${athlete.escalao}
-        </div>
-      `).join('');
+    function searchFutsalAthlete() {
+      const query = document.getElementById('searchAthlete').value.toLowerCase();
+      const filteredAthletes = futsalAthletes.filter(athlete => athlete.name.toLowerCase().includes(query));
+      renderFilteredFutsalAthleteList(filteredAthletes);
+    }
+
+    function renderFilteredFutsalAthleteList(filteredAthletes) {
+      const athleteListContainer = document.getElementById('athleteListContainer');
+      athleteListContainer.innerHTML = '';
+
+      filteredAthletes.forEach((athlete, index) => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <strong>Nome:</strong> ${athlete.name} | <strong>Pais:</strong> ${athlete.parents} | 
+          <strong>Contacto:</strong> ${athlete.contact} | <strong>Escalão:</strong> ${athlete.escalao} | 
+          <strong>Comentários:</strong> ${athlete.comments} 
+          <button onclick="removeFutsalAthlete(${index})">Remover</button>
+        `;
+        athleteListContainer.appendChild(div);
+      });
     }
 
     function toggleDropdown(id) {
       const dropdown = document.getElementById(id);
-      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     }
 
-    window.onload = loadAthletesFutsal;
+    window.onload = loadFutsalAthletes;
   </script>
 </body>
 </html>
