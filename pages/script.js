@@ -12,13 +12,19 @@ const escalãoColors = {
     "Seniores": "#e6a9e3"
 };
 
+// Load athletes from local storage when the page loads
+window.onload = function() {
+    loadAthletes(); // Load athletes from localStorage
+    renderCalendar(); // Render the calendar on page load
+};
+
 // Load athletes from local storage
 function loadAthletes() {
     const storedAthletes = localStorage.getItem('athletes');
     if (storedAthletes) {
         athletes = JSON.parse(storedAthletes);
     }
-    renderAthleteLists();
+    renderAthleteLists(); // Render athlete lists after loading
 }
 
 function saveAthletes() {
@@ -70,7 +76,7 @@ function renderAthleteLists() {
 function removeAthlete(index, escalão) {
     athletes = athletes.filter((athlete, i) => i !== index);
     saveAthletes();
-    renderAthleteLists();
+    renderAthleteLists(); // Re-render the athlete lists after removing an athlete
 }
 
 function addAthlete() {
@@ -83,7 +89,7 @@ function addAthlete() {
     const newAthlete = { nome: name, pais: parents, contacto: contact, escalao: escalão, comentarios: comments };
     athletes.push(newAthlete);
     saveAthletes();
-    renderAthleteLists();
+    renderAthleteLists(); // Re-render the athlete lists after adding a new athlete
 }
 
 // Calendar functions
