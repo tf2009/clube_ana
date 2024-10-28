@@ -1,6 +1,6 @@
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 let currentDate = new Date();
-const bookings = {};
+const bookings = {}; // Use an object to store bookings by date
 let athletes = [];
 
 // Define colors for each escalão
