@@ -150,6 +150,8 @@
     }
     .day-name {
       text-align: center; /* Center the day names */
+      border: 1px solid #ddd; /* Add border to day names */
+      background-color: #f4f4f4; /* Background color for visibility */
     }
   </style>
 </head>
@@ -245,13 +247,19 @@
       localStorage.setItem('athletes', JSON.stringify(athletes));
     }
 
-    function renderAthleteLists() {
+    function searchAthlete() {
+      const searchTerm = document.getElementById('searchAthlete').value.toLowerCase();
+      const filteredAthletes = athletes.filter(athlete => athlete.name.toLowerCase().includes(searchTerm));
+      renderAthleteLists(filteredAthletes);
+    }
+
+    function renderAthleteLists(filteredAthletes = athletes) {
       const athleteListContainer = document.getElementById('athleteListContainer');
       athleteListContainer.innerHTML = '';
-      athletes.forEach((athlete, index) => {
+      filteredAthletes.forEach((athlete, index) => {
         const athleteDiv = document.createElement('div');
         athleteDiv.innerHTML = `
-          ${athlete.name} (${athlete.category}) 
+          ${athlete.name} (${athlete.escalão}) 
           <span class="remove-athlete" onclick="removeAthlete(${index})">[Remover]</span>
         `;
         athleteListContainer.appendChild(athleteDiv);
