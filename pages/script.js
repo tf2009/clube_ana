@@ -119,7 +119,7 @@ function renderCalendar() {
     // Create 6 rows to cover all possible weeks in a month
     for (let i = 0; i < 6; i++) {
         const weekRow = document.createElement('div');
-        weekRow.classList.add('week'); // Adding class for styling
+        weekRow.classList.add('week');
 
         for (let j = 0; j < 7; j++) {
             const dayCell = document.createElement('div');
@@ -140,7 +140,7 @@ function renderCalendar() {
                         const bookingDiv = document.createElement("div");
                         bookingDiv.className = "booking";
                         bookingDiv.style.backgroundColor = booking.color; // Set background color from booking
-                        bookingDiv.textContent = `${booking.start} - ${booking.end}: ${booking.comment}`; // Show time slot and comment in the calendar
+                        bookingDiv.textContent = `${booking.start} - ${booking.end}: ${booking.comment}`; // Show time slot and comment
                         dayCell.appendChild(bookingDiv);
                     }
                 });
@@ -182,10 +182,16 @@ document.getElementById("saveBookingButton").onclick = () => {
     if (dateInput && start && end) {
         // Create a date object from the input and ensure it's a local date
         const bookingDate = new Date(dateInput);
-        // Convert to local date without time zone effect
-        bookingDate.setHours(0, 0, 0, 0); // Set time to midnight for consistency
+        // Use local date by setting the time to the start of the day
+        bookingDate.setHours(0, 0, 0, 0);
 
-        bookings.push({ date: bookingDate.toISOString(), start, end, color, comment });
+        bookings.push({ 
+            date: bookingDate.toISOString().split('T')[0], // Store only the date part
+            start, 
+            end, 
+            color, 
+            comment 
+        });
         renderCalendar(); // Refresh the calendar to show the new booking
 
         // Clear the input fields
