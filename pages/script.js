@@ -45,17 +45,21 @@ function renderAthleteLists() {
 
     for (const [escalão, athleteGroup] of Object.entries(groupedAthletes)) {
         const table = document.createElement('table');
+        
+        // Create a header row with a dropdown for each escalão
         const headerRow = document.createElement('tr');
-        headerRow.innerHTML = `<th colspan="5">${escalão}</th>`;
+        headerRow.innerHTML = `
+            <th colspan="5">
+                <span class="dropdown" onclick="toggleDropdown('${escalão}')">
+                    ${escalão} <span class="arrow">▼</span>
+                </span>
+            </th>`;
         table.appendChild(headerRow);
-        table.innerHTML += `
-            <tr>
-                <th>Nome</th>
-                <th>Pais</th>
-                <th>Contacto</th>
-                <th>Comentários</th>
-                <th>Remover</th>
-            </tr>`;
+        
+        // Create a tbody for athletes
+        const athleteTableBody = document.createElement('tbody');
+        athleteTableBody.id = `athleteGroup-${escalão}`;
+        athleteTableBody.style.display = 'none'; // Start hidden
 
         athleteGroup.forEach((athlete, index) => {
             const row = document.createElement('tr');
@@ -66,11 +70,18 @@ function renderAthleteLists() {
                 <td>${athlete.comentarios}</td>
                 <td><span class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</span></td>
             `;
-            table.appendChild(row);
+            athleteTableBody.appendChild(row);
         });
 
+        table.appendChild(athleteTableBody);
         athleteListContainer.appendChild(table);
     }
+}
+
+// Toggle dropdown visibility for each escalão
+function toggleDropdown(escalão) {
+    const athleteGroup = document.getElementById(`athleteGroup-${escalão}`);
+    athleteGroup.style.display = athleteGroup.style.display === 'none' ? 'table-row-group' : 'none';
 }
 
 function removeAthlete(index, escalão) {

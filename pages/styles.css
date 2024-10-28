@@ -160,6 +160,19 @@ form input {
     color: #a40b1e; /* Darker shade on hover */
 }
 
+/* Dropdown styles */
+h2 .arrow {
+    margin-left: 5px;
+}
+
+.dropdown {
+    display: none; /* Hide by default */
+}
+
+.dropdown.visible {
+    display: block; /* Show when active */
+}
+
 /* Media Queries for responsiveness */
 @media (max-width: 600px) {
     h1 {
