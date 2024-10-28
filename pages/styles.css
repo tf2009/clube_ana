@@ -89,12 +89,13 @@ form input {
 }
 
 .day-names {
-    display: flex;
+    display: flex; /* Use flexbox to arrange items in a row */
+    justify-content: space-between; /* Evenly distribute items */
     width: 100%;
 }
 
 .day-names div {
-    flex: 1; /* Equal width for day names */
+    flex: 1; /* Each day takes equal width */
     text-align: center;
     font-weight: bold;
 }
