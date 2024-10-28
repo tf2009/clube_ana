@@ -81,7 +81,7 @@ form input {
 
 .day-header {
     display: flex; /* Change to flex to arrange in a row */
-    background-color: #f4f4f4;
+    background-color: lightblue; /* Set the background color to light blue */
     text-align: center;
     font-weight: bold;
     padding: 5px 0;
