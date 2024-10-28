@@ -170,7 +170,7 @@
       <input type="text" id="athleteContact" placeholder="Contacto" required>
       <input type="text" id="athleteEscalao" placeholder="Escalão" required>
       <textarea id="athleteComments" placeholder="Comentários"></textarea>
-      <button id="saveAthleteButton" onclick="addAthlete()">Adicionar Atleta</button>
+      <button id="saveAthleteButton" onclick="addAthlete_volley()">Adicionar Atleta</button>
     </div>
   </div>
 
@@ -290,7 +290,7 @@
       }
     }
 
-    function addAthlete() {
+    function addAthlete_volley() {
       const name = document.getElementById('athleteName').value;
       const parents = document.getElementById('athleteParents').value;
       const contact = document.getElementById('athleteContact').value;
