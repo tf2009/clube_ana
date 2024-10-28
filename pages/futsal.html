@@ -24,16 +24,13 @@
     }
     h2 {
       cursor: grab;
-      /*margin: 20px auto; /* Centers the header within the parent container */
-      margin: 20px 0; /* Removes auto centering to start from the left */
+      margin: 20px 0;
       font-size: 1.1em;
-      /*background-color: #9fc2c6;*/
       background-color: lightblue;
       padding: 10px 15px;
       border-radius: 20px;
-      width: 35%; /* Sets the width to 40% of the row */
-      text-align:justify; /* Aligns text to the start */
-      /*padding-left: 25%; /* Adds padding to the left for offset */
+      width: 35%; 
+      text-align: justify; 
     }
     h3 {
       margin: 0;
@@ -174,59 +171,59 @@
 
   <!-- Functionality Sections -->
   <div class="functionality">
-    <h2 onclick="toggleDropdown('searchDropdown')">
+    <h2 onclick="toggleDropdown('futsalSearchDropdown')">
       Procurar atleta   <span style="margin-left: 5px;">▼</span>
     </h2>
-    <div id="searchDropdown" class="dropdown">
-      <input type="text" id="searchAthlete" placeholder="Procurar atleta por nome..." onkeyup="searchAthlete()">
+    <div id="futsalSearchDropdown" class="dropdown">
+      <input type="text" id="futsalSearchAthlete" placeholder="Procurar atleta por nome..." onkeyup="futsalSearchAthlete()">
     </div>
   </div>
 
   <div class="functionality">
-    <h2 onclick="toggleDropdown('addDropdown')">
+    <h2 onclick="toggleDropdown('futsalAddDropdown')">
       Adicionar atleta  <span>▼</span>
     </h2>
-    <div id="addDropdown" class="dropdown">
-      <input type="text" id="athleteName" placeholder="Nome" required>
-      <input type="text" id="athleteParents" placeholder="Pais" required>
-      <input type="text" id="athleteContact" placeholder="Contacto" required>
-      <input type="text" id="athleteEscalao" placeholder="Escalão" required>
-      <textarea id="athleteComments" placeholder="Comentários"></textarea>
-      <button id="saveAthleteButton" onclick="addAthlete()">Adicionar Atleta</button>
+    <div id="futsalAddDropdown" class="dropdown">
+      <input type="text" id="futsalAthleteName" placeholder="Nome" required>
+      <input type="text" id="futsalAthleteParents" placeholder="Pais" required>
+      <input type="text" id="futsalAthleteContact" placeholder="Contacto" required>
+      <input type="text" id="futsalAthleteEscalao" placeholder="Escalão" required>
+      <textarea id="futsalAthleteComments" placeholder="Comentários"></textarea>
+      <button id="futsalSaveAthleteButton" onclick="futsalAddAthlete()">Adicionar Atleta</button>
     </div>
   </div>
 
   <div class="functionality">
-    <h2 onclick="toggleDropdown('listDropdown')">
+    <h2 onclick="toggleDropdown('futsalListDropdown')">
       Atletas inscritos <span>▼</span>
     </h2>
-    <div id="listDropdown" class="dropdown">
-      <div id="athleteListContainer">
-        <div id="athleteTables"></div> <!-- Container for athlete lists by escalão -->
+    <div id="futsalListDropdown" class="dropdown">
+      <div id="futsalAthleteListContainer">
+        <div id="futsalAthleteTables"></div> <!-- Container for athlete lists by escalão -->
       </div>
     </div>
   </div>
 
   <div class="functionality">
-    <h2 onclick="toggleDropdown('bookingDropdown')">
+    <h2 onclick="toggleDropdown('futsalBookingDropdown')">
       Marcar treinos    <span>▼</span>
     </h2>
-    <div id="bookingDropdown" class="dropdown">
-      <input type="date" id="bookingDate" required>
-      <input type="time" id="bookingStartTime" required>
-      <input type="time" id="bookingEndTime" required>
-      <input type="color" id="bookingColor" value="#ff0000">
-      <input type="text" id="bookingComment" placeholder="Comentários sobre a marcação">
-      <button id="saveBookingButton" onclick="addBooking()">Adicionar Marcação</button>
+    <div id="futsalBookingDropdown" class="dropdown">
+      <input type="date" id="futsalBookingDate" required>
+      <input type="time" id="futsalBookingStartTime" required>
+      <input type="time" id="futsalBookingEndTime" required>
+      <input type="color" id="futsalBookingColor" value="#ff0000">
+      <input type="text" id="futsalBookingComment" placeholder="Comentários sobre a marcação">
+      <button id="futsalSaveBookingButton" onclick="futsalAddBooking()">Adicionar Marcação</button>
     </div>
   </div>
 
   <!-- Calendar Display -->
   <div class="calendar-container">
     <div class="calendar-header">
-      <button id="prevMonthButton" onclick="changeMonth(-1)">◀</button>
-      <h3 id="currentMonth"></h3>
-      <button id="nextMonthButton" onclick="changeMonth(1)">▶</button>
+      <button id="futsalPrevMonthButton" onclick="futsalChangeMonth(-1)">◀</button>
+      <h3 id="futsalCurrentMonth"></h3>
+      <button id="futsalNextMonthButton" onclick="futsalChangeMonth(1)">▶</button>
     </div>
     <div class="day-header">
       <div class="day-name">Dom</div>
@@ -237,82 +234,57 @@
       <div class="day-name">Sex</div>
       <div class="day-name">Sáb</div>
     </div>
-    <div id="calendar"></div>
+    <div id="futsalCalendar"></div>
   </div>
 
   <script>
     const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    let currentDate = new Date();
-    const bookings = [];
-    let athletes = []; // Array to hold athlete data
-
-    // Load athletes from localStorage if available
-    window.onload = function() {
-      loadAthletes();
-      loadBookings();
-      renderAthletes(); // Render athletes on page load
-      renderCalendar();
-    };
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    const futsalAthletes = JSON.parse(localStorage.getItem('futsalAthletes')) || [];
+    const futsalBookings = JSON.parse(localStorage.getItem('futsalBookings')) || [];
 
     function toggleDropdown(dropdownId) {
       const dropdown = document.getElementById(dropdownId);
-      dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
     }
 
-    function addAthlete() {
-      const name = document.getElementById('athleteName').value;
-      const parents = document.getElementById('athleteParents').value;
-      const contact = document.getElementById('athleteContact').value;
-      const escalão = document.getElementById('athleteEscalao').value;
-      const comments = document.getElementById('athleteComments').value;
+    function futsalAddAthlete() {
+      const name = document.getElementById('futsalAthleteName').value;
+      const parents = document.getElementById('futsalAthleteParents').value;
+      const contact = document.getElementById('futsalAthleteContact').value;
+      const escalão = document.getElementById('futsalAthleteEscalao').value;
+      const comments = document.getElementById('futsalAthleteComments').value;
 
-      const athlete = {
-        name,
-        parents,
-        contact,
-        escalão,
-        comments
-      };
-      athletes.push(athlete);
-      saveAthletes();
-      clearAthleteForm();
-      renderAthletes();
+      const athlete = { name, parents, contact, escalão, comments };
+      futsalAthletes.push(athlete);
+      localStorage.setItem('futsalAthletes', JSON.stringify(futsalAthletes));
+      document.getElementById('futsalAthleteName').value = '';
+      document.getElementById('futsalAthleteParents').value = '';
+      document.getElementById('futsalAthleteContact').value = '';
+      document.getElementById('futsalAthleteEscalao').value = '';
+      document.getElementById('futsalAthleteComments').value = '';
+      futsalDisplayAthletes();
     }
 
-    function clearAthleteForm() {
-      document.getElementById('athleteName').value = '';
-      document.getElementById('athleteParents').value = '';
-      document.getElementById('athleteContact').value = '';
-      document.getElementById('athleteEscalao').value = '';
-      document.getElementById('athleteComments').value = '';
-    }
+    function futsalDisplayAthletes() {
+      const athleteTables = {};
+      futsalAthletes.forEach(athlete => {
+        if (!athleteTables[athlete.escalão]) {
+          athleteTables[athlete.escalão] = [];
+        }
+        athleteTables[athlete.escalão].push(athlete);
+      });
 
-    function saveAthletes() {
-      localStorage.setItem('athletes', JSON.stringify(athletes));
-    }
-
-    function loadAthletes() {
-      const storedAthletes = localStorage.getItem('athletes');
-      if (storedAthletes) {
-        athletes = JSON.parse(storedAthletes);
-      }
-    }
-
-    function renderAthletes() {
-      const athleteTables = document.getElementById('athleteTables');
-      athleteTables.innerHTML = '';
-      const groupedAthletes = athletes.reduce((acc, athlete) => {
-        acc[athlete.escalão] = acc[athlete.escalão] || [];
-        acc[athlete.escalão].push(athlete);
-        return acc;
-      }, {});
-
-      for (const escalão in groupedAthletes) {
+      const athleteListContainer = document.getElementById('futsalAthleteTables');
+      athleteListContainer.innerHTML = '';
+      for (const escalão in athleteTables) {
         const table = document.createElement('table');
-        const headerRow = document.createElement('tr');
-        headerRow.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Ações</th>`;
-        table.appendChild(headerRow);
-        groupedAthletes[escalão].forEach((athlete, index) => {
+        const header = document.createElement('tr');
+        header.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Remover</th>`;
+        table.appendChild(header);
+
+        athleteTables[escalão].forEach(athlete => {
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>${athlete.name}</td>
@@ -320,116 +292,108 @@
             <td>${athlete.contact}</td>
             <td>${athlete.escalão}</td>
             <td>${athlete.comments}</td>
-            <td><span class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</span></td>
-          `;
+            <td class="remove-athlete" onclick="futsalRemoveAthlete('${athlete.name}')">Remover</td>`;
           table.appendChild(row);
         });
-        athleteTables.appendChild(table);
+        athleteListContainer.appendChild(table);
       }
     }
 
-    function removeAthlete(index, escalão) {
-      athletes = athletes.filter((_, i) => i !== index);
-      saveAthletes();
-      renderAthletes();
-    }
-
-    function searchAthlete() {
-      const input = document.getElementById('searchAthlete').value.toLowerCase();
-      const athleteTables = document.getElementById('athleteTables');
-      const rows = athleteTables.getElementsByTagName('tr');
-      for (let i = 1; i < rows.length; i++) { // Skip header row
-        const cells = rows[i].getElementsByTagName('td');
-        const name = cells[0].innerText.toLowerCase();
-        rows[i].style.display = name.includes(input) ? '' : 'none';
+    function futsalRemoveAthlete(name) {
+      const index = futsalAthletes.findIndex(athlete => athlete.name === name);
+      if (index > -1) {
+        futsalAthletes.splice(index, 1);
+        localStorage.setItem('futsalAthletes', JSON.stringify(futsalAthletes));
+        futsalDisplayAthletes();
       }
     }
 
-    function addBooking() {
-      const date = document.getElementById('bookingDate').value;
-      const startTime = document.getElementById('bookingStartTime').value;
-      const endTime = document.getElementById('bookingEndTime').value;
-      const color = document.getElementById('bookingColor').value;
-      const comment = document.getElementById('bookingComment').value;
+    function futsalSearchAthlete() {
+      const searchInput = document.getElementById('futsalSearchAthlete').value.toLowerCase();
+      const filteredAthletes = futsalAthletes.filter(athlete => athlete.name.toLowerCase().includes(searchInput));
+      const athleteListContainer = document.getElementById('futsalAthleteTables');
+      athleteListContainer.innerHTML = '';
 
-      if (!date || !startTime || !endTime) {
-        alert("Por favor, preencha todas as informações de reserva.");
-        return;
-      }
-
-      const booking = {
-        date,
-        startTime,
-        endTime,
-        color,
-        comment
-      };
-
-      bookings.push(booking);
-      saveBookings();
-      renderCalendar();
-      clearBookingForm();
+      filteredAthletes.forEach(athlete => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${athlete.name}</td>
+          <td>${athlete.parents}</td>
+          <td>${athlete.contact}</td>
+          <td>${athlete.escalão}</td>
+          <td>${athlete.comments}</td>
+          <td class="remove-athlete" onclick="futsalRemoveAthlete('${athlete.name}')">Remover</td>`;
+        athleteListContainer.appendChild(row);
+      });
     }
 
-    function clearBookingForm() {
-      document.getElementById('bookingDate').value = '';
-      document.getElementById('bookingStartTime').value = '';
-      document.getElementById('bookingEndTime').value = '';
-      document.getElementById('bookingColor').value = '#ff0000';
-      document.getElementById('bookingComment').value = '';
-    }
+    function futsalAddBooking() {
+      const bookingDate = document.getElementById('futsalBookingDate').value;
+      const startTime = document.getElementById('futsalBookingStartTime').value;
+      const endTime = document.getElementById('futsalBookingEndTime').value;
+      const color = document.getElementById('futsalBookingColor').value;
+      const comment = document.getElementById('futsalBookingComment').value;
 
-    function saveBookings() {
-      localStorage.setItem('bookings', JSON.stringify(bookings));
-    }
-
-    function loadBookings() {
-      const storedBookings = localStorage.getItem('bookings');
-      if (storedBookings) {
-        bookings.push(...JSON.parse(storedBookings));
+      if (bookingDate && startTime && endTime) {
+        const booking = { date: bookingDate, startTime, endTime, color, comment };
+        futsalBookings.push(booking);
+        localStorage.setItem('futsalBookings', JSON.stringify(futsalBookings));
+        document.getElementById('futsalBookingDate').value = '';
+        document.getElementById('futsalBookingStartTime').value = '';
+        document.getElementById('futsalBookingEndTime').value = '';
+        document.getElementById('futsalBookingComment').value = '';
+        futsalDisplayCalendar();
       }
     }
 
-    function renderCalendar() {
-      const calendar = document.getElementById('calendar');
+    function futsalDisplayCalendar() {
+      const calendar = document.getElementById('futsalCalendar');
       calendar.innerHTML = '';
-      const month = currentDate.getMonth();
-      const year = currentDate.getFullYear();
-      document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
-
-      const firstDay = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
       for (let i = 0; i < firstDay; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = 'day';
-        calendar.appendChild(emptyCell);
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'day';
+        calendar.appendChild(emptyDay);
       }
 
       for (let day = 1; day <= daysInMonth; day++) {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'day';
-        dayDiv.innerText = day;
-        const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        dayDiv.innerHTML = day;
+        const bookingsForDay = futsalBookings.filter(booking => booking.date === `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
         
-        // Check for bookings on this date
-        const bookingsForDay = bookings.filter(b => b.date === date);
-        bookingsForDay.forEach(b => {
+        bookingsForDay.forEach(booking => {
           const bookingDiv = document.createElement('div');
           bookingDiv.className = 'booking';
-          bookingDiv.style.backgroundColor = b.color;
-          bookingDiv.innerText = `${b.startTime} - ${b.endTime} ${b.comment}`;
+          bookingDiv.style.backgroundColor = booking.color;
+          bookingDiv.textContent = `${booking.startTime} - ${booking.endTime}: ${booking.comment}`;
           dayDiv.appendChild(bookingDiv);
         });
 
         calendar.appendChild(dayDiv);
       }
+
+      document.getElementById('futsalCurrentMonth').textContent = `${monthNames[currentMonth]} ${currentYear}`;
     }
 
-    function changeMonth(offset) {
-      currentDate.setMonth(currentDate.getMonth() + offset);
-      renderCalendar();
+    function futsalChangeMonth(direction) {
+      currentMonth += direction;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      } else if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      futsalDisplayCalendar();
     }
+
+    window.onload = function() {
+      futsalDisplayAthletes();
+      futsalDisplayCalendar();
+    };
   </script>
 </body>
 </html>
