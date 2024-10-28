@@ -1,7 +1,7 @@
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 let currentDate = new Date();
-const bookings = []; // Array to hold booking data
-let athletes = []; // Array to hold athlete data
+const bookings = [];
+let athletes = [];
 
 // Define colors for each escalão
 const escalãoColors = {
@@ -116,6 +116,7 @@ function renderCalendar() {
 
             if (i === 0 && j < firstDayOfMonth) {
                 // Empty cell
+                dayCell.classList.add('empty');
             } else if (date > daysInMonth) {
                 break; // Exit if we exceed the number of days in the month
             } else {
