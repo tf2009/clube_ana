@@ -179,7 +179,7 @@
       Atletas inscritos <span>▼</span>
     </h2>
     <div id="listDropdown" class="dropdown">
-      <div id="athleteListContainer"></div> <!-- Container for athlete lists by escalão -->
+      <div id="athleteListContainer_futsal"></div> <!-- Container for athlete lists by escalão -->
     </div>
   </div>
 
@@ -229,19 +229,19 @@
     };
 
     // Load athletes from local storage
-    function loadAthletes() {
+    function loadAthletes_futsal() {
       const storedAthletes = localStorage.getItem('athletes');
       if (storedAthletes) {
         athletes = JSON.parse(storedAthletes);
       }
-      renderAthleteLists();
+      renderAthleteLists_futsal();
     }
 
-    function saveAthletes() {
+    function saveAthletes_futsal() {
       localStorage.setItem('athletes', JSON.stringify(athletes));
     }
 
-    function renderAthleteLists() {
+    function renderAthleteLists_futsal() {
       const athleteListContainer = document.getElementById('athleteListContainer');
       athleteListContainer.innerHTML = '';
 
@@ -286,7 +286,7 @@
           tbody.appendChild(row);
         });
 
-        athleteListContainer.appendChild(table);
+        athleteListContainer_futsal.appendChild(table);
       }
     }
 
@@ -298,8 +298,8 @@
       const comments = document.getElementById('athleteComments').value;
 
       athletes.push({ name, parents, contact, escalao, comments });
-      saveAthletes(); // Save to local storage
-      renderAthleteLists();
+      saveAthletes_futsal(); // Save to local storage
+      renderAthleteLists_futsal();
 
       // Reset input fields
       document.getElementById('athleteName').value = '';
@@ -311,18 +311,18 @@
 
     function removeAthlete(index) {
       athletes.splice(index, 1);
-      saveAthletes(); // Save updated list to local storage
-      renderAthleteLists();
+      saveAthletes_futsal(); // Save updated list to local storage
+      renderAthleteLists_futsal();
     }
 
-    function searchAthlete() {
+    function searchAthlete_futsal() {
       const query = document.getElementById('searchAthlete').value.toLowerCase();
       const filteredAthletes = athletes.filter(athlete => athlete.name.toLowerCase().includes(query));
       renderFilteredAthleteList(filteredAthletes);
     }
 
-    function renderFilteredAthleteList(filteredAthletes) {
-      const athleteListContainer = document.getElementById('athleteListContainer');
+    function renderFilteredAthleteList_futsal(filteredAthletes) {
+      const athleteListContainer_futsal = document.getElementById('athleteListContainer');
       athleteListContainer.innerHTML = '';
 
       const groupedFilteredAthletes = filteredAthletes.reduce((acc, athlete) => {
@@ -366,7 +366,7 @@
           tbody.appendChild(row);
         });
 
-        athleteListContainer.appendChild(table);
+        athleteListContainer_futsal.appendChild(table);
       }
     }
 
