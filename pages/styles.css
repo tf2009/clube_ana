@@ -33,6 +33,12 @@ section {
 form input {
     margin-right: 10px;
 }
+table {
+    font-size: 10px; /* Adjust the size as needed */
+}
+th, td {
+    font-size: inherit; /* Ensures th takes font-size from table */
+}
 
 /* Sports icons container */
 .sports-icons {
