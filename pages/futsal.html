@@ -244,12 +244,13 @@
 
         athleteGroup.forEach((athlete, index) => {
           const row = document.createElement('tr');
-          row.innerHTML = `<td>${athlete.nome}</td>
-                           <td>${athlete.pais}</td>
-                           <td>${athlete.contacto}</td>
-                           <td>${athlete.escalão}</td>
-                           <td>${athlete.comentarios}</td>
-                           <td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td>`;
+          row.innerHTML = `
+            <td>${athlete.nome}</td>
+            <td>${athlete.pais}</td>
+            <td>${athlete.contacto}</td>
+            <td>${athlete.escalão}</td>
+            <td>${athlete.comentarios}</td>
+            <td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td>`;
           table.appendChild(row);
         });
         athleteListContainer.appendChild(table);
@@ -297,7 +298,10 @@
       if (date && startTime && endTime) {
         const bookingDate = new Date(date);
         bookingDate.setHours(0, 0, 0, 0); // Set time to midnight
-        bookings.push({ date: bookingDate.toISOString().split('T')[0], startTime, endTime, color, comment });
+        // Convert to UTC by creating a new Date object with UTC time
+        const utcBookingDate = new Date(Date.UTC(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate()));
+        
+        bookings.push({ date: utcBookingDate.toISOString().split('T')[0], startTime, endTime, color, comment });
         renderCalendar(); // Re-render the calendar
       }
     }
