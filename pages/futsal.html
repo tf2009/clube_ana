@@ -44,14 +44,14 @@
       border-radius: 4px;
     }
     h2 {
-      cursor: pointer;
+      cursor: row-resize;
       margin: 20px 0;
       font-size: 1.1em;
       background-color: #9fc2c6;
       padding: 5px 20px;
       border-radius: 5px;
-      display: flex;
-      justify-content: space-between;
+      display:inline-block;
+      justify-content:center;
       align-items: right;
     }
     .dropdown {
@@ -218,7 +218,7 @@
   <div class="calendar-container">
     <div class="calendar-header">
       <button id="prevMonthButton" onclick="changeMonth(-1)">◀</button>
-      <h2 id="currentMonth"></h2>
+      <h3 id="currentMonth"></h3>
       <button id="nextMonthButton" onclick="changeMonth(1)">▶</button>
     </div>
     <div class="day-header">
