@@ -1,7 +1,97 @@
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 let currentDate = new Date();
 const bookings = []; // Array to hold booking data
+let athletes = []; // Array to hold athlete data
 
+// Define colors for each escalão
+const escalãoColors = {
+    "Infantis": "#d1e7dd",
+    "infantis": "#d1e7dd",
+    "Iniciados": "#fff3cd",
+    "iniciados": "#fff3cd",
+    "Juvenis": "#cfe2ff",
+    "juvenis": "#cfe2ff",
+    "Juniores": "#f9cb9c",
+    "juniores": "#f9cb9c",
+    "Seniores": "#e6a9e3",
+    "seniores": "#e6a9e3"
+};
+
+// Load athletes from local storage
+function loadAthletes() {
+    const storedAthletes = localStorage.getItem('athletes');
+    if (storedAthletes) {
+        athletes = JSON.parse(storedAthletes);
+    }
+    renderAthleteLists();
+}
+
+function saveAthletes() {
+    localStorage.setItem('athletes', JSON.stringify(athletes));
+}
+
+function renderAthleteLists() {
+    const athleteListContainer = document.getElementById('athleteListContainer');
+    athleteListContainer.innerHTML = '';
+
+    const groupedAthletes = athletes.reduce((acc, athlete) => {
+        if (!acc[athlete.escalao]) {
+            acc[athlete.escalao] = [];
+        }
+        acc[athlete.escalao].push(athlete);
+        return acc;
+    }, {});
+
+    for (const [escalão, athleteGroup] of Object.entries(groupedAthletes)) {
+        const table = document.createElement('table');
+        const headerRow = document.createElement('tr');
+        headerRow.innerHTML = `<th colspan="5">${escalão}</th>`;
+        table.appendChild(headerRow);
+        table.innerHTML += `
+            <tr>
+                <th>Nome</th>
+                <th>Pais</th>
+                <th>Contacto</th>
+                <th>Comentários</th>
+                <th>Remover</th>
+            </tr>`;
+
+        athleteGroup.forEach((athlete, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${athlete.nome}</td>
+                <td>${athlete.pais}</td>
+                <td>${athlete.contacto}</td>
+                <td>${athlete.comentarios}</td>
+                <td><span class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</span></td>
+            `;
+            table.appendChild(row);
+        });
+
+        athleteListContainer.appendChild(table);
+    }
+}
+
+function removeAthlete(index, escalão) {
+    athletes = athletes.filter((athlete, i) => i !== index);
+    saveAthletes();
+    renderAthleteLists();
+}
+
+function addAthlete() {
+    const name = document.getElementById('athleteName').value;
+    const parents = document.getElementById('athleteParents').value;
+    const contact = document.getElementById('athleteContact').value;
+    const escalão = document.getElementById('athleteEscalao').value;
+    const comments = document.getElementById('athleteComments').value;
+
+    const newAthlete = { nome: name, pais: parents, contacto: contact, escalao: escalão, comentarios: comments };
+    athletes.push(newAthlete);
+    saveAthletes();
+    renderAthleteLists();
+}
+
+// Calendar functions
 function renderCalendar() {
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
@@ -92,4 +182,5 @@ document.getElementById("saveBookingButton").onclick = () => {
 };
 
 // Initial calendar render
-renderCalendar();
+loadAthletes(); // Load athletes on page load
+renderCalendar(); // Render the calendar on page load
