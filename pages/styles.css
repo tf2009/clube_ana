@@ -158,3 +158,18 @@ form input {
 .remove-athlete:hover {
     color: #a40b1e; /* Darker shade on hover */
 }
+
+/* Media Queries for responsiveness */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2em;
+    }
+    .sports-icons a {
+        width: 100px;
+        height: 100px;
+    }
+    .booking-form input,
+    .booking-form select {
+        width: 100%; /* Full width on small screens */
+    }
+}
