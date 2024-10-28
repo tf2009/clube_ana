@@ -318,8 +318,18 @@
 
         const heading = document.createElement("h3");
         heading.innerText = escalão;
-        athleteListContainer.appendChild(heading);
-        athleteListContainer.appendChild(table);
+        heading.style.cursor = "pointer"; // Indicate that the heading is clickable.
+        heading.style.fontSize = "10px"; // Set the font size to 14px (adjust as needed).
+        heading.onclick = function() {
+        // Toggle visibility of the associated table.
+        table.style.display = table.style.display === "none" ? "" : "none";
+        };
+        
+        //const heading = document.createElement("h3");
+        //heading.innerText = escalão;
+        //athleteListContainer.appendChild(heading);
+        //athleteListContainer.appendChild(table);
+        
       }
     }
 
