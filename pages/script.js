@@ -173,14 +173,19 @@ document.getElementById('nextMonthButton').addEventListener('click', () => {
 
 // Function to add a booking
 document.getElementById("saveBookingButton").onclick = () => {
-    const date = document.getElementById("bookingDate").value;
+    const dateInput = document.getElementById("bookingDate").value;
     const start = document.getElementById("bookingStartTime").value;
     const end = document.getElementById("bookingEndTime").value;
     const color = document.getElementById("bookingColor").value;
     const comment = document.getElementById("bookingComment").value;
 
-    if (date && start && end) {
-        bookings.push({ date, start, end, color, comment });
+    if (dateInput && start && end) {
+        // Create a date object from the input and ensure it's a local date
+        const bookingDate = new Date(dateInput);
+        // Convert to local date without time zone effect
+        bookingDate.setHours(0, 0, 0, 0); // Set time to midnight for consistency
+
+        bookings.push({ date: bookingDate.toISOString(), start, end, color, comment });
         renderCalendar(); // Refresh the calendar to show the new booking
 
         // Clear the input fields
