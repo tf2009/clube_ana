@@ -143,10 +143,13 @@
       margin-top: 2px; /* Allow stacking */
     }
     .day-header {
-      display: contents; /* Using contents for the header layout */
+      display: grid; /* Use grid for day names */
+      grid-template-columns: repeat(7, 1fr); /* Align with days of the week */
+      font-weight: bold;
+      margin-bottom: 5px;
     }
     .day-name {
-      font-weight: bold;
+      text-align: center; /* Center the day names */
     }
   </style>
 </head>
@@ -244,16 +247,21 @@
 
     function renderAthleteLists() {
       const athleteListContainer = document.getElementById('athleteListContainer');
-      athleteListContainer.innerHTML = ''; // Clear the container
-
+      athleteListContainer.innerHTML = '';
       athletes.forEach((athlete, index) => {
         const athleteDiv = document.createElement('div');
         athleteDiv.innerHTML = `
-          ${athlete.name} (${athlete.parents}) 
-          <span class="remove-athlete" onclick="removeAthlete(${index})">✖</span>
+          ${athlete.name} (${athlete.category}) 
+          <span class="remove-athlete" onclick="removeAthlete(${index})">[Remover]</span>
         `;
         athleteListContainer.appendChild(athleteDiv);
       });
+    }
+
+    function removeAthlete(index) {
+      athletes.splice(index, 1);
+      saveAthletes();
+      renderAthleteLists();
     }
 
     function addAthlete() {
@@ -263,29 +271,24 @@
       const escalão = document.getElementById('athleteEscalao').value;
       const comments = document.getElementById('athleteComments').value;
 
-      if (name && parents) {
+      if (name && parents && contact && escalão) {
         athletes.push({ name, parents, contact, escalão, comments });
         saveAthletes();
         renderAthleteLists();
+        // Clear input fields after adding
         document.getElementById('athleteName').value = '';
         document.getElementById('athleteParents').value = '';
         document.getElementById('athleteContact').value = '';
         document.getElementById('athleteEscalao').value = '';
         document.getElementById('athleteComments').value = '';
       } else {
-        alert('Nome e Pais são obrigatórios!');
+        alert("Por favor, preencha todos os campos obrigatórios.");
       }
-    }
-
-    function removeAthlete(index) {
-      athletes.splice(index, 1);
-      saveAthletes();
-      renderAthleteLists();
     }
 
     function toggleDropdown(dropdownId) {
       const dropdown = document.getElementById(dropdownId);
-      dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ? 'block' : 'none';
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     }
 
     function addBooking() {
@@ -298,54 +301,64 @@
       if (date && startTime && endTime) {
         bookings.push({ date, startTime, endTime, color, comment });
         renderCalendar();
+        clearBookingInputs();
       } else {
-        alert('Data, Hora de Início e Hora de Fim são obrigatórios!');
+        alert("Por favor, preencha todos os campos obrigatórios.");
       }
+    }
+
+    function clearBookingInputs() {
+      document.getElementById('bookingDate').value = '';
+      document.getElementById('bookingStartTime').value = '';
+      document.getElementById('bookingEndTime').value = '';
+      document.getElementById('bookingColor').value = '#ff0000';
+      document.getElementById('bookingComment').value = '';
     }
 
     function renderCalendar() {
       const calendar = document.getElementById('calendar');
       calendar.innerHTML = '';
-      const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
+      const year = currentDate.getFullYear();
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
-      const totalDays = lastDay.getDate();
-      const startDay = firstDay.getDay();
+      const numDays = lastDay.getDate();
 
-      document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
-
-      // Fill empty days before the first day of the month
-      for (let i = 0; i < startDay; i++) {
-        const emptyDiv = document.createElement('div');
-        calendar.appendChild(emptyDiv);
+      // Days before first day of the month
+      for (let i = 0; i < firstDay.getDay(); i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.classList.add('day');
+        calendar.appendChild(emptyCell);
       }
 
-      for (let day = 1; day <= totalDays; day++) {
-        const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'day';
-        dayDiv.innerText = day;
+      // Days of the month
+      for (let day = 1; day <= numDays; day++) {
+        const date = new Date(year, month, day);
+        const dayElement = document.createElement('div');
+        dayElement.classList.add('day');
+        dayElement.innerText = day;
 
-        const dayBookings = bookings.filter(b => b.date === date);
+        const dayBookings = bookings.filter(b => b.date === date.toISOString().split('T')[0]);
         dayBookings.forEach(booking => {
-          const bookingDiv = document.createElement('div');
-          bookingDiv.className = 'booking';
-          bookingDiv.style.backgroundColor = booking.color; // Set background color
-          bookingDiv.innerText = `${booking.startTime} - ${booking.endTime}: ${booking.comment}`;
-          dayDiv.appendChild(bookingDiv);
+          const bookingElement = document.createElement('div');
+          bookingElement.classList.add('booking');
+          bookingElement.style.backgroundColor = booking.color;
+          bookingElement.innerText = booking.comment || 'Marcação';
+          dayElement.appendChild(bookingElement);
         });
 
-        calendar.appendChild(dayDiv);
+        calendar.appendChild(dayElement);
       }
+
+      document.getElementById('currentMonth').innerText = monthNames[month] + ' ' + year;
     }
 
-    function changeMonth(direction) {
-      currentDate.setMonth(currentDate.getMonth() + direction);
+    function changeMonth(delta) {
+      currentDate.setMonth(currentDate.getMonth() + delta);
       renderCalendar();
     }
 
-    // Initial render
+    // Initial load
     loadAthletes();
     renderCalendar();
   </script>

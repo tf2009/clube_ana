@@ -80,8 +80,7 @@ form input {
 }
 
 .day-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr); /* Align with days of the week */
+    display: flex; /* Change to flex to arrange in a row */
     background-color: #f4f4f4;
     text-align: center;
     font-weight: bold;
@@ -89,8 +88,8 @@ form input {
 }
 
 .day-names {
-    display: flex; /* Use flexbox to arrange items in a row */
-    justify-content: space-between; /* Evenly distribute items */
+    display: flex; /* Ensure day names are in a row */
+    justify-content: space-between; /* Space them evenly */
     width: 100%;
 }
 
