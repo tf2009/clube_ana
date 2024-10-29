@@ -309,9 +309,18 @@
 
       for (const escalão in groupedAthletes) {
         const table = document.createElement('table');
+        
+        // Create and append the "Escalão" header row
+        const escalãoHeaderRow = document.createElement('tr');
+        escalãoHeaderRow.innerHTML = `<th colspan="6" style="font-size: 15px;">Escalão: ${escalão}</th>`; // Adjust the font size as needed
+        table.appendChild(escalãoHeaderRow);
+        
+        // Create and append the main header row
         const headerRow = document.createElement('tr');
-        headerRow.innerHTML = `<th style="font-size: 18px;">Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Ações</th>`;
+        headerRow.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Ações</th>`;
         table.appendChild(headerRow);
+        
+        // Populate the table with athlete data
         groupedAthletes[escalão].forEach((athlete, index) => {
           const row = document.createElement('tr');
           row.innerHTML = `
