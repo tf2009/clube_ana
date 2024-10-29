@@ -407,7 +407,7 @@ function loadBookings() {
 
 
 function renderCalendar() {
-  const calendar = document.getElementById('calendar');
+    const calendar = document.getElementById('calendar');
     calendar.innerHTML = '';
     const month = currentDate.getMonth();
     const year = currentDate.getFullYear();
@@ -453,7 +453,7 @@ function renderCalendar() {
 
 // Updated removeBooking function to accept a booking object
 function removeBooking(booking) {
-  if (!booking) {
+    if (!booking) {
         alert("Booking information is required for removal.");
         return;
     }
