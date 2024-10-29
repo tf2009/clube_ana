@@ -223,6 +223,7 @@ Procurar atleta   <span style="margin-left: 5px;">▼</span>
 <input type="color" id="bookingColor" value="#ff0000">
 <input type="text" id="bookingComment" placeholder="Comentários sobre a marcação">
 <button id="saveBookingButton" onclick="addBooking()">Adicionar Marcação</button>
+<button id="saveBookingButton" onclick="removeBooking()">Remover Marcação</button>
 </div>
 </div>
 
@@ -379,6 +380,32 @@ comment
 };
 
 bookings.push(booking);
+saveBookings();
+renderCalendar();
+clearBookingForm();
+}
+
+function removeBooking() {
+const date = document.getElementById('bookingDate').value;
+const startTime = document.getElementById('bookingStartTime').value;
+const endTime = document.getElementById('bookingEndTime').value;
+const color = document.getElementById('bookingColor').value;
+const comment = document.getElementById('bookingComment').value;
+
+if (!date || !startTime || !endTime) {
+alert("Por favor, preencha todas as informações de reserva.");
+return;
+}
+
+const booking = {
+date,
+startTime,
+endTime,
+color,
+comment
+};
+
+bookings.removeBooking(booking);
 saveBookings();
 renderCalendar();
 clearBookingForm();
