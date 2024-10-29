@@ -94,26 +94,54 @@ function removeAthlete(index, escalão) {
     renderAthleteLists(); // Re-render the athlete lists after removing an athlete
 }
 
-function addAthlete() {
-    const name = document.getElementById('athleteName').value;
-    const parents = document.getElementById('athleteParents').value;
-    const contact = document.getElementById('athleteContact').value;
-    const escalão = document.getElementById('athleteEscalao').value;
-    const comments = document.getElementById('athleteComments').value;
+// Function to add a booking
+function addBooking() {
+    const dateInput = document.getElementById("bookingDate").value;
+    const start = document.getElementById("bookingStartTime").value;
+    const end = document.getElementById("bookingEndTime").value;
+    const color = document.getElementById("bookingColor").value;
+    const comment = document.getElementById("bookingComment").value;
 
-    const newAthlete = { 
-        nome: name, 
-        pais: parents, 
-        contacto: contact, 
-        escalao: escalão, 
-        comentarios: comments 
-    };
-    athletes.push(newAthlete);
-    saveAthletes();
-    renderAthleteLists(); // Re-render the athlete lists after adding a new athlete
+    if (dateInput && start && end) {
+        const bookingDate = new Date(dateInput + 'T00:00:00');
+        const dateKey = bookingDate.toISOString().split('T')[0]; // Use ISO string for consistent format
+
+        // Initialize the bookings array for the date if it doesn't exist
+        if (!bookings[dateKey]) {
+            bookings[dateKey] = [];
+        }
+
+        // Push new booking
+        bookings[dateKey].push({ 
+            start, 
+            end, 
+            color, 
+            comment 
+        });
+        renderCalendar(); // Refresh the calendar to show the new booking
+
+        // Clear the input fields
+        document.getElementById("bookingDate").value = "";
+        document.getElementById("bookingStartTime").value = "";
+        document.getElementById("bookingEndTime").value = "";
+        document.getElementById("bookingComment").value = "";
+    } else {
+        alert("Please fill in all required fields.");
+    }
 }
 
-// Calendar functions
+// Function to remove a booking
+function removeBooking(dateKey, index) {
+    if (bookings[dateKey]) {
+        bookings[dateKey].splice(index, 1); // Remove the booking at the given index
+        if (bookings[dateKey].length === 0) {
+            delete bookings[dateKey]; // Delete the date key if no bookings remain
+        }
+        renderCalendar(); // Refresh the calendar to reflect the removal
+    }
+}
+
+// Render calendar
 function renderCalendar() {
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
@@ -160,11 +188,18 @@ function renderCalendar() {
                 // Show bookings for the current day
                 const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
                 if (bookings[dateKey]) {
-                    bookings[dateKey].forEach(booking => {
+                    bookings[dateKey].forEach((booking, index) => {
                         const bookingDiv = document.createElement("div");
                         bookingDiv.className = "booking";
                         bookingDiv.style.backgroundColor = booking.color; // Set background color from booking
                         bookingDiv.textContent = `${booking.start} - ${booking.end}: ${booking.comment}`; // Show time slot and comment
+
+                        // Add a remove button to each booking
+                        const removeButton = document.createElement("button");
+                        removeButton.textContent = "Remove";
+                        removeButton.onclick = () => removeBooking(dateKey, index);
+                        bookingDiv.appendChild(removeButton);
+
                         dayCell.appendChild(bookingDiv);
                     });
                 }
@@ -195,44 +230,6 @@ document.getElementById('nextMonthButton').addEventListener('click', () => {
     renderCalendar();
 });
 
-// Function to add a booking
-document.getElementById("saveBookingButton").onclick = () => {
-    const dateInput = document.getElementById("bookingDate").value;
-    const start = document.getElementById("bookingStartTime").value;
-    const end = document.getElementById("bookingEndTime").value;
-    const color = document.getElementById("bookingColor").value;
-    const comment = document.getElementById("bookingComment").value;
-
-    if (dateInput && start && end) {
-        // Create a date object from the input, using local time
-        const bookingDate = new Date(dateInput + 'T00:00:00');
-        const dateKey = bookingDate.toISOString().split('T')[0]; // Use ISO string for consistent format
-
-        // Initialize the bookings array for the date if it doesn't exist
-        if (!bookings[dateKey]) {
-            bookings[dateKey] = [];
-        }
-
-        // Push new booking
-        bookings[dateKey].push({ 
-            start, 
-            end, 
-            color, 
-            comment 
-        });
-        renderCalendar(); // Refresh the calendar to show the new booking
-
-        // Clear the input fields
-        document.getElementById("bookingDate").value = "";
-        document.getElementById("bookingStartTime").value = "";
-        document.getElementById("bookingEndTime").value = "";
-        document.getElementById("bookingComment").value = "";
-    } else {
-        alert("Please fill in all required fields.");
-    }
-};
-
 // Initial calendar render
 loadAthletes(); // Load athletes on page load
 renderCalendar(); // Render the calendar on page load
-
