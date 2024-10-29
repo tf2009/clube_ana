@@ -304,7 +304,7 @@ return acc;
 
 for (const escalão in groupedAthletes) {
   const tableHeader = document.createElement('h3');
-  //tableHeader.className = 'escalão
+  tableHeader.className = 'escalão';
   tableHeader.className = 'escalão-header';
   tableHeader.textContent = `Escalão: ${escalão}`;
   athleteTables.appendChild(tableHeader);
