@@ -7,167 +7,164 @@
 <style>
 /* General Styles */
 body {
-font-family: 'Courier New', Courier, monospace;
-margin: 20px;
-background-color: #f9f9f9;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 20px;
+    background-color: #f9f9f9;
 }
 header {
-background-color: #c8102e;
-color: white;
-padding: 20px;
-text-align: center;
-position: relative;
+    background-color: #c8102e;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    position: relative;
 }
 h1 {
-margin: 0;
-font-size: 2.3em;
+    margin: 0;
+    font-size: 2.3em;
 }
 h2 {
-cursor: grab;
-/*margin: 20px auto; /* Centers the header within the parent container */
-margin: 20px 0; /* Removes auto centering to start from the left */
-font-size: 1.1em;
-/*background-color: #9fc2c6;*/
-background-color: lightblue;
-padding: 10px 15px;
-border-radius: 20px;
-width: 35%; /* Sets the width to 40% of the row */
-text-align:justify; /* Aligns text to the start */
-/*padding-left: 25%; /* Adds padding to the left for offset */
+    cursor: grab;
+    margin: 20px 0;
+    font-size: 1.1em;
+    background-color: lightblue;
+    padding: 10px 15px;
+    border-radius: 20px;
+    width: 35%; 
+    text-align: justify; 
 }
 h3 {
-margin: 0;
-font-size: 1.3em;
+    margin: 0;
+    font-size: 1.3em;
 }
 #club-logo {
-position: absolute;
-top: 10px;
-left: 20px;
-height: 60px;
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    height: 60px;
 }
 #homeButton {
-position: absolute;
-right: 20px;
-top: 20px;
-padding: 10px 20px;
-background-color: #c8102e;
-color: white;
-border: none;
-cursor: pointer;
-border-radius: 4px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    padding: 10px 20px;
+    background-color: #c8102e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
 }
 
 .dropdown {
-display: none;
-padding: 10px;
-background-color: #fff;
-border: 1px solid #ddd;
-border-radius: 5px;
-margin-top: 10px;
-width: 100%;
+    display: none;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 10px;
+    width: 100%;
 }
 
 .functionality {
-margin-bottom: 50px;
-width: 80%;
+    margin-bottom: 50px;
+    width: 80%;
 }
 input, textarea {
-padding: 5px;
-margin: 5px 0;
-border: 1px solid #ccc;
-border-radius: 4px;
-width: 20%;
+    padding: 5px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 20%;
 }
 #searchAthlete {
-width: 20%;
+    width: 20%;
 }
 textarea {
-height: 50px;
-vertical-align: middle;
-width: 60%;
+    height: 50px;
+    vertical-align: middle;
+    width: 60%;
 }
 #bookingDate, #bookingStartTime, #bookingEndTime {
-width: 8%; /* Made date input smaller */
+    width: 8%; 
 }
 #saveBookingButton, #saveAthleteButton {
-padding: 10px 20px;
-background-color: #4CAF50;
-color: white;
-border: none;
-cursor: pointer;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
 table {
-width: 100%;
-border-collapse: collapse;
-margin-top: 10px;
-margin-bottom: 30px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 30px;
 }
 th, td {
-border: 1px solid #ddd;
-padding: 8px;
-text-align: left;
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
 }
 th {
-background-color: #f4f4f4;
+    background-color: #f4f4f4;
 }
 .remove-athlete {
-cursor: pointer;
-color: red;
-font-size: 0.9em;
+    cursor: pointer;
+    color: red;
+    font-size: 0.9em;
 }
 .calendar-container {
-margin-top: 80px;
+    margin-top: 80px;
 }
 .calendar-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
 #calendar {
-display: grid; /* Use grid layout for calendar */
-grid-template-columns: repeat(7, 1fr); /* 7 columns for days of the week */
-gap: 5px; /* Space between grid items */
-width: 100%;
+    display: grid; 
+    grid-template-columns: repeat(7, 1fr); 
+    gap: 5px; 
+    width: 100%;
 }
 .day {
-border: 1px solid #ddd;
-box-sizing: border-box;
-padding: 5px;
-text-align: center;
-position: relative;
-height: 80px;
-overflow: hidden; /* Prevent overflow of booking elements */
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    padding: 5px;
+    text-align: center;
+    position: relative;
+    height: 80px;
+    overflow: hidden; 
 }
 .booking {
-position: absolute;
-width: 100%;
-color: white;
-text-align: center;
-line-height: 20px;
-border-radius: 4px;
-padding: 2px 0;
-bottom: 0; /* Align bookings at the bottom */
-margin-top: 2px; /* Allow stacking */
+    position: absolute;
+    width: 100%;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    border-radius: 4px;
+    padding: 2px 0;
+    bottom: 0; 
+    margin-top: 2px; 
 }
 .day-header {
-display: grid; /* Use grid for day names */
-grid-template-columns: repeat(7, 1fr); /* Align with days of the week */
-font-weight: bold;
-margin-bottom: 5px;
-background-color: lightblue; /* Light blue background for the day header */
+    display: grid; 
+    grid-template-columns: repeat(7, 1fr); 
+    font-weight: bold;
+    margin-bottom: 5px;
+    background-color: lightblue; 
 }
 .day-name {
-text-align: center; /* Center the day names */
-border: 1px solid #ddd; /* Add border to day names */
+    text-align: center; 
+    border: 1px solid #ddd; 
 }
 .escalão-header {
-font-size: 12px;
-font-weight: bold;
-color: blue;
-background-color: lightgray;
-padding: 8px;
-text-align: left;
+    font-size: 12px;
+    font-weight: bold;
+    color: blue;
+    background-color: lightgray;
+    padding: 8px;
+    text-align: left;
 }
 </style>
 </head>
@@ -251,198 +248,192 @@ let currentDate = new Date();
 const bookings = [];
 let athletes = []; // Array to hold athlete data
 
-// Load athletes from localStorage if available
+// Load athletes and bookings from localStorage if available
 window.onload = function() {
-loadAthletes();
-loadBookings();
-renderAthletes(); // Render athletes on page load
-renderCalendar();
+    loadAthletes();
+    loadBookings();
+    renderAthletes(); // Render athletes on page load
+    renderCalendar();
 };
 
 function toggleDropdown(dropdownId) {
-const dropdown = document.getElementById(dropdownId);
-dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+    const dropdown = document.getElementById(dropdownId);
+    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
 }
 
 function addAthlete() {
-const name = document.getElementById('athleteName').value;
-const parents = document.getElementById('athleteParents').value;
-const contact = document.getElementById('athleteContact').value;
-const escalão = document.getElementById('athleteEscalao').value;
-const comments = document.getElementById('athleteComments').value;
+    const name = document.getElementById('athleteName').value;
+    const parents = document.getElementById('athleteParents').value;
+    const contact = document.getElementById('athleteContact').value;
+    const escalão = document.getElementById('athleteEscalao').value;
+    const comments = document.getElementById('athleteComments').value;
 
-const athlete = {
-name,
-parents,
-contact,
-escalão,
-comments
-};
-athletes.push(athlete);
-saveAthletes();
-clearAthleteForm();
-renderAthletes();
+    const athlete = {
+        name,
+        parents,
+        contact,
+        escalão,
+        comments
+    };
+    athletes.push(athlete);
+    saveAthletes();
+    clearAthleteForm();
+    renderAthletes();
 }
 
 function clearAthleteForm() {
-document.getElementById('athleteName').value = '';
-document.getElementById('athleteParents').value = '';
-document.getElementById('athleteContact').value = '';
-document.getElementById('athleteEscalao').value = '';
-document.getElementById('athleteComments').value = '';
-}
-
-function saveAthletes() {
-localStorage.setItem('athletes', JSON.stringify(athletes));
-}
-
-function loadAthletes() {
-const storedAthletes = localStorage.getItem('athletes');
-if (storedAthletes) {
-athletes = JSON.parse(storedAthletes);
-}
+    document.getElementById('athleteName').value = '';
+    document.getElementById('athleteParents').value = '';
+    document.getElementById('athleteContact').value = '';
+    document.getElementById('athleteEscalao').value = '';
+    document.getElementById('athleteComments').value = '';
 }
 
 function renderAthletes() {
-const athleteTables = document.getElementById('athleteTables');
-athleteTables.innerHTML = '';
-const groupedAthletes = athletes.reduce((acc, athlete) => {
-acc[athlete.escalão] = acc[athlete.escalão] || [];
-acc[athlete.escalão].push(athlete);
-return acc;
-}, {});
+    const athleteTables = {};
+    athletes.forEach(athlete => {
+        if (!athleteTables[athlete.escalão]) {
+            athleteTables[athlete.escalão] = [];
+        }
+        athleteTables[athlete.escalão].push(athlete);
+    });
 
-for (const escalão in groupedAthletes) {
-  //header para cada tabela de jogadores
-  const tableHeader = document.createElement('h3');
-  tableHeader.className = 'escalão';
-  tableHeader.className = 'escalão-header';
-  tableHeader.textContent = `Escalão: ${escalão}`;
-  athleteTables.appendChild(tableHeader);
-  
-  //tabela propriamente dita com os titulos de 
-  //cada seccão e jogadores inscritos
-  const table = document.createElement('table');
-  const headerRow = document.createElement('tr');
-  headerRow.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Ações</th>`;
-  table.appendChild(headerRow);
-  groupedAthletes[escalão].forEach((athlete, index) => {
-  const row = document.createElement('tr');
-  row.innerHTML = ` 
-    <td>${athlete.name}</td>
-    <td>${athlete.parents}</td>
-    <td>${athlete.contact}</td>
-    <td>${athlete.escalão}</td>
-    <td>${athlete.comments}</td>
-    <td><span class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</span></td>`;
-table.appendChild(row);
-});
-athleteTables.appendChild(table);
-}
+    const athleteListContainer = document.getElementById('athleteTables');
+    athleteListContainer.innerHTML = '';
+    for (const escalão in athleteTables) {
+        const table = document.createElement('table');
+        const headerRow = document.createElement('tr');
+        headerRow.innerHTML = `<th>${escalão}</th><th>Ações</th>`;
+        table.appendChild(headerRow);
+        athleteTables[escalão].forEach((athlete, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${athlete.name} (${athlete.parents})</td>
+            <td class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</td>`;
+            table.appendChild(row);
+        });
+        athleteListContainer.appendChild(table);
+    }
 }
 
 function removeAthlete(index, escalão) {
-athletes = athletes.filter((_, i) => i !== index);
-saveAthletes();
-renderAthletes();
+    athletes.splice(index, 1);
+    saveAthletes();
+    renderAthletes();
 }
 
-function searchAthlete() {
-const input = document.getElementById('searchAthlete').value.toLowerCase();
-const athleteTables = document.getElementById('athleteTables');
-const rows = athleteTables.getElementsByTagName('tr');
-for (let i = 1; i < rows.length; i++) { // Skip header row
-const cells = rows[i].getElementsByTagName('td');
-const name = cells[0].innerText.toLowerCase();
-rows[i].style.display = name.includes(input) ? '' : 'none';
+function saveAthletes() {
+    localStorage.setItem('athletes', JSON.stringify(athletes));
 }
+
+function loadAthletes() {
+    const savedAthletes = localStorage.getItem('athletes');
+    if (savedAthletes) {
+        athletes = JSON.parse(savedAthletes);
+    }
 }
 
 function addBooking() {
-const date = document.getElementById('bookingDate').value;
-const startTime = document.getElementById('bookingStartTime').value;
-const endTime = document.getElementById('bookingEndTime').value;
-const color = document.getElementById('bookingColor').value;
-const comment = document.getElementById('bookingComment').value;
+    const bookingDate = document.getElementById('bookingDate').value;
+    const startTime = document.getElementById('bookingStartTime').value;
+    const endTime = document.getElementById('bookingEndTime').value;
+    const bookingColor = document.getElementById('bookingColor').value;
+    const bookingComment = document.getElementById('bookingComment').value;
 
-if (!date || !startTime || !endTime) {
-alert("Por favor, preencha todas as informações de reserva.");
-return;
-}
-
-const booking = {
-date,
-startTime,
-endTime,
-color,
-comment
-};
-
-bookings.push(booking);
-saveBookings();
-renderCalendar();
-clearBookingForm();
+    if (bookingDate && startTime && endTime) {
+        const booking = {
+            date: bookingDate,
+            startTime: startTime,
+            endTime: endTime,
+            color: bookingColor,
+            comment: bookingComment
+        };
+        bookings.push(booking);
+        saveBookings();
+        renderCalendar();
+        clearBookingForm();
+    } else {
+        alert("Por favor, preencha todos os campos.");
+    }
 }
 
 function clearBookingForm() {
-document.getElementById('bookingDate').value = '';
-document.getElementById('bookingStartTime').value = '';
-document.getElementById('bookingEndTime').value = '';
-document.getElementById('bookingColor').value = '#ff0000';
-document.getElementById('bookingComment').value = '';
+    document.getElementById('bookingDate').value = '';
+    document.getElementById('bookingStartTime').value = '';
+    document.getElementById('bookingEndTime').value = '';
+    document.getElementById('bookingColor').value = '#ff0000';
+    document.getElementById('bookingComment').value = '';
 }
 
 function saveBookings() {
-localStorage.setItem('bookings', JSON.stringify(bookings));
+    localStorage.setItem('bookings', JSON.stringify(bookings));
 }
 
 function loadBookings() {
-const storedBookings = localStorage.getItem('bookings');
-if (storedBookings) {
-bookings.push(...JSON.parse(storedBookings));
-}
+    const savedBookings = localStorage.getItem('bookings');
+    if (savedBookings) {
+        bookings = JSON.parse(savedBookings);
+    }
 }
 
 function renderCalendar() {
-const calendar = document.getElementById('calendar');
-calendar.innerHTML = '';
-const month = currentDate.getMonth();
-const year = currentDate.getFullYear();
-document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
+    const calendar = document.getElementById('calendar');
+    calendar.innerHTML = '';
 
-const firstDay = new Date(year, month, 1).getDay();
-const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const month = currentDate.getMonth();
+    const year = currentDate.getFullYear();
 
-for (let i = 0; i < firstDay; i++) {
-const emptyCell = document.createElement('div');
-emptyCell.className = 'day';
-calendar.appendChild(emptyCell);
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const totalDays = lastDay.getDate();
+
+    const firstDayOfWeek = firstDay.getDay();
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+    for (let i = 0; i < firstDayOfWeek; i++) {
+        const day = document.createElement('div');
+        day.className = 'day';
+        day.innerHTML = `<div>${daysInPrevMonth - firstDayOfWeek + i + 1}</div>`;
+        calendar.appendChild(day);
+    }
+
+    for (let day = 1; day <= totalDays; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'day';
+        dayElement.innerHTML = `<div>${day}</div>`;
+        
+        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        bookings.forEach(booking => {
+            if (booking.date === dateString) {
+                const bookingDiv = document.createElement('div');
+                bookingDiv.className = 'booking';
+                bookingDiv.style.backgroundColor = booking.color;
+                bookingDiv.innerHTML = `${booking.startTime} - ${booking.endTime}<br>${booking.comment}
+                <span onclick="removeBooking('${dateString}', '${booking.startTime}')" style="cursor: pointer; color: white; font-weight: bold;">✖</span>`;
+                dayElement.appendChild(bookingDiv);
+            }
+        });
+
+        calendar.appendChild(dayElement);
+    }
 }
 
-for (let day = 1; day <= daysInMonth; day++) {
-const dayDiv = document.createElement('div');
-dayDiv.className = 'day';
-dayDiv.innerText = day;
-const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-// Check for bookings on this date
-const bookingsForDay = bookings.filter(b => b.date === date);
-bookingsForDay.forEach(b => {
-const bookingDiv = document.createElement('div');
-bookingDiv.className = 'booking';
-bookingDiv.style.backgroundColor = b.color;
-bookingDiv.innerText = `${b.startTime} - ${b.endTime} ${b.comment}`;
-dayDiv.appendChild(bookingDiv);
-});
-
-calendar.appendChild(dayDiv);
-}
+function removeBooking(date, startTime) {
+    bookings = bookings.filter(booking => !(booking.date === date && booking.startTime === startTime));
+    saveBookings();
+    renderCalendar();
 }
 
-function changeMonth(offset) {
-currentDate.setMonth(currentDate.getMonth() + offset);
-renderCalendar();
+function changeMonth(delta) {
+    currentDate.setMonth(currentDate.getMonth() + delta);
+    renderCalendar();
+    updateMonthHeader();
 }
+
+function updateMonthHeader() {
+    const monthHeader = document.getElementById('currentMonth');
+    monthHeader.innerHTML = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+}
+
 </script>
 </body>
-</html>
 </html>
