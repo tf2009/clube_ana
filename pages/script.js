@@ -198,6 +198,8 @@ function renderCalendar() {
                         // Add a remove button to each booking
                         const removeButton = document.createElement("button");
                         removeButton.textContent = "Remove";
+                        removeButton.style.backgroundColor = "green"; // Set button color to green
+                        removeButton.style.color = "white"; // Set button text color to white
                         removeButton.onclick = () => removeBooking(dateKey, index);
                         bookingDiv.appendChild(removeButton);
 
@@ -230,7 +232,3 @@ document.getElementById('nextMonthButton').addEventListener('click', () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar();
 });
-
-// Initial calendar render
-loadAthletes(); // Load athletes on page load
-renderCalendar(); // Render the calendar on page load

@@ -285,28 +285,17 @@ function clearAthleteForm() {
     document.getElementById('athleteComments').value = '';
 }
 
-function saveAthletes() {
-    localStorage.setItem('athletes', JSON.stringify(athletes));
-}
-
-function loadAthletes() {
-    const athletesData = localStorage.getItem('athletes');
-    if (athletesData) {
-        athletes = JSON.parse(athletesData);
-    }
-}
-
 function renderAthletes() {
     const athleteTables = document.getElementById('athleteTables');
     athleteTables.innerHTML = '';
-
-    const groupedAthletes = athletes.reduce((groups, athlete) => {
-        const escalão = athlete.escalão;
-        if (!groups[escalão]) {
-            groups[escalão] = [];
+    
+    // Group athletes by escalão
+    const groupedAthletes = athletes.reduce((acc, athlete) => {
+        if (!acc[athlete.escalão]) {
+            acc[athlete.escalão] = [];
         }
-        groups[escalão].push(athlete);
-        return groups;
+        acc[athlete.escalão].push(athlete);
+        return acc;
     }, {});
 
     for (const escalão in groupedAthletes) {
@@ -316,45 +305,60 @@ function renderAthletes() {
         athleteTables.appendChild(escalãoHeader);
 
         const table = document.createElement('table');
-        const tbody = document.createElement('tbody');
+        const headerRow = document.createElement('tr');
+        headerRow.innerHTML = '<th>Nome</th><th>Pais</th><th>Contacto</th><th>Comentários</th><th>Ações</th>';
+        table.appendChild(headerRow);
 
-        groupedAthletes[escalão].forEach(athlete => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
+        groupedAthletes[escalão].forEach((athlete, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
                 <td>${athlete.name}</td>
                 <td>${athlete.parents}</td>
                 <td>${athlete.contact}</td>
                 <td>${athlete.comments}</td>
-                <td class="remove-athlete" onclick="removeAthlete('${athlete.name}')">Remover</td>
+                <td><span class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</span></td>
             `;
-            tbody.appendChild(tr);
+            table.appendChild(row);
         });
-
-        table.appendChild(tbody);
         athleteTables.appendChild(table);
     }
 }
 
-function removeAthlete(name) {
-    athletes = athletes.filter(athlete => athlete.name !== name);
+function removeAthlete(index, escalão) {
+    athletes = athletes.filter((_, i) => i !== index);
     saveAthletes();
     renderAthletes();
 }
 
+function saveAthletes() {
+    localStorage.setItem('athletes', JSON.stringify(athletes));
+}
+
+function loadAthletes() {
+    const storedAthletes = localStorage.getItem('athletes');
+    athletes = storedAthletes ? JSON.parse(storedAthletes) : [];
+}
+
 function addBooking() {
-    const bookingDate = document.getElementById('bookingDate').value;
+    const date = document.getElementById('bookingDate').value;
     const startTime = document.getElementById('bookingStartTime').value;
     const endTime = document.getElementById('bookingEndTime').value;
     const color = document.getElementById('bookingColor').value;
     const comment = document.getElementById('bookingComment').value;
 
-    if (bookingDate && startTime && endTime) {
-        const booking = { date: bookingDate, startTime, endTime, color, comment };
-        bookings.push(booking);
-        saveBookings();
-        renderCalendar();
-        clearBookingForm();
+    if (!date || !startTime || !endTime) {
+        alert("Por favor, preencha todos os campos de reserva.");
+        return;
     }
+
+    const booking = {
+        date, startTime, endTime, color, comment
+    };
+
+    bookings.push(booking);
+    saveBookings();
+    renderCalendar();
+    clearBookingForm();
 }
 
 function clearBookingForm() {
@@ -370,10 +374,8 @@ function saveBookings() {
 }
 
 function loadBookings() {
-    const bookingsData = localStorage.getItem('bookings');
-    if (bookingsData) {
-        bookings = JSON.parse(bookingsData);
-    }
+    const storedBookings = localStorage.getItem('bookings');
+    bookings = storedBookings ? JSON.parse(storedBookings) : [];
 }
 
 function renderCalendar() {
@@ -381,45 +383,36 @@ function renderCalendar() {
     calendar.innerHTML = '';
     const month = currentDate.getMonth();
     const year = currentDate.getFullYear();
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
 
-    const firstDay = new Date(year, month, 1);
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const lastDay = new Date(year, month, daysInMonth).getDay();
-
-    document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
-
-    // Fill in the blanks before the first day of the month
-    for (let i = 0; i < firstDay.getDay(); i++) {
-        const emptyDay = document.createElement('div');
-        emptyDay.className = 'day';
-        calendar.appendChild(emptyDay);
+    // Create empty divs for days of the week
+    for (let i = 0; i < firstDay; i++) {
+        calendar.innerHTML += '<div class="day"></div>';
     }
 
-    // Render days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
+    for (let date = 1; date <= lastDate; date++) {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'day';
-        dayDiv.innerText = day;
+        dayDiv.textContent = date;
 
-        const bookingsForDay = bookings.filter(booking => booking.date === `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
-        
-        bookingsForDay.forEach(booking => {
+        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+
+        // Render bookings for the specific date
+        const dayBookings = bookings.filter(booking => booking.date === dateString);
+        dayBookings.forEach(booking => {
             const bookingDiv = document.createElement('div');
             bookingDiv.className = 'booking';
             bookingDiv.style.backgroundColor = booking.color;
-            bookingDiv.innerText = `${booking.startTime} - ${booking.endTime}\n${booking.comment}`;
+            bookingDiv.textContent = `${booking.startTime} - ${booking.endTime}: ${booking.comment}`;
             dayDiv.appendChild(bookingDiv);
         });
 
         calendar.appendChild(dayDiv);
     }
-    
-    // Fill in the blanks after the last day of the month
-    for (let i = lastDay + 1; i < 7; i++) {
-        const emptyDay = document.createElement('div');
-        emptyDay.className = 'day';
-        calendar.appendChild(emptyDay);
-    }
+
+    // Update month header
+    document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
 }
 
 function changeMonth(direction) {
@@ -428,45 +421,31 @@ function changeMonth(direction) {
 }
 
 function searchAthlete() {
-    const input = document.getElementById('searchAthlete').value.toLowerCase();
+    const filter = document.getElementById('searchAthlete').value.toLowerCase();
+    const filteredAthletes = athletes.filter(athlete => athlete.name.toLowerCase().includes(filter));
+    
+    // Render filtered athletes (similar to renderAthletes but with filtering)
     const athleteTables = document.getElementById('athleteTables');
     athleteTables.innerHTML = '';
+    
+    const table = document.createElement('table');
+    const headerRow = document.createElement('tr');
+    headerRow.innerHTML = '<th>Nome</th><th>Pais</th><th>Contacto</th><th>Comentários</th><th>Ações</th>';
+    table.appendChild(headerRow);
 
-    const filteredAthletes = athletes.filter(athlete => athlete.name.toLowerCase().includes(input));
-
-    const groupedAthletes = filteredAthletes.reduce((groups, athlete) => {
-        const escalão = athlete.escalão;
-        if (!groups[escalão]) {
-            groups[escalão] = [];
-        }
-        groups[escalão].push(athlete);
-        return groups;
-    }, {});
-
-    for (const escalão in groupedAthletes) {
-        const escalãoHeader = document.createElement('div');
-        escalãoHeader.className = 'escalão-header';
-        escalãoHeader.textContent = escalão;
-        athleteTables.appendChild(escalãoHeader);
-
-        const table = document.createElement('table');
-        const tbody = document.createElement('tbody');
-
-        groupedAthletes[escalão].forEach(athlete => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${athlete.name}</td>
-                <td>${athlete.parents}</td>
-                <td>${athlete.contact}</td>
-                <td>${athlete.comments}</td>
-                <td class="remove-athlete" onclick="removeAthlete('${athlete.name}')">Remover</td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-        table.appendChild(tbody);
-        athleteTables.appendChild(table);
-    }
+    filteredAthletes.forEach((athlete, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${athlete.name}</td>
+            <td>${athlete.parents}</td>
+            <td>${athlete.contact}</td>
+            <td>${athlete.comments}</td>
+            <td><span class="remove-athlete" onclick="removeAthlete(${index}, '${athlete.escalão}')">Remover</span></td>
+        `;
+        table.appendChild(row);
+    });
+    
+    athleteTables.appendChild(table);
 }
 </script>
 </body>
