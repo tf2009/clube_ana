@@ -131,7 +131,7 @@ function addBooking() {
     }
 }
 
-// Function to remove a booking
+// Function to remove a booking by clicking on it
 function removeBooking(dateKey, index) {
     if (bookings[dateKey]) {
         bookings[dateKey].splice(index, 1); // Remove the booking at the given index
@@ -202,6 +202,9 @@ function renderCalendar() {
                         removeButton.style.color = "white"; // Set button text color to white
                         removeButton.onclick = () => removeBooking(dateKey, index);
                         bookingDiv.appendChild(removeButton);
+
+                        // Add click event to the bookingDiv to remove the booking
+                        bookingDiv.onclick = () => removeBooking(dateKey, index);
 
                         dayCell.appendChild(bookingDiv);
                     });
