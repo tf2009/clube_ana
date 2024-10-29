@@ -236,5 +236,3 @@ document.getElementById("saveBookingButton").onclick = () => {
 loadAthletes(); // Load athletes on page load
 renderCalendar(); // Render the calendar on page load
 
-localStorage.clear(); 
-
