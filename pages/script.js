@@ -99,7 +99,8 @@ function addBooking() {
     const dateInput = document.getElementById("bookingDate").value;
     const start = document.getElementById("bookingStartTime").value;
     const end = document.getElementById("bookingEndTime").value;
-    const color = document.getElementById("bookingColor").value;
+    const athleteEscalão = document.getElementById("athleteEscalao").value; // Select escalão for the booking
+    const color = escalãoColors[athleteEscalão] || "#ffffff"; // Default to white if not found
     const comment = document.getElementById("bookingComment").value;
 
     if (dateInput && start && end) {
