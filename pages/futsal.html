@@ -360,64 +360,49 @@ rows[i].style.display = name.includes(input) ? '' : 'none';
 }
 
 function addBooking() {
-const date = document.getElementById('bookingDate').value;
-const startTime = document.getElementById('bookingStartTime').value;
-const endTime = document.getElementById('bookingEndTime').value;
-const color = document.getElementById('bookingColor').value;
-const comment = document.getElementById('bookingComment').value;
+  const date = document.getElementById('bookingDate').value;
+  const startTime = document.getElementById('bookingStartTime').value;
+  const endTime = document.getElementById('bookingEndTime').value;
+  const color = document.getElementById('bookingColor').value;
+  const comment = document.getElementById('bookingComment').value;
 
-if (!date || !startTime || !endTime) {
-alert("Por favor, preencha todas as informações de reserva.");
-return;
+  if (!date || !startTime || !endTime) {
+  alert("Por favor, preencha todas as informações de reserva.");
+  return;
+  }
+
+  const booking = {
+  date,
+  startTime,
+  endTime,
+  color,
+  comment
+  };
+
+  bookings.push(booking);
+  saveBookings();
+  renderCalendar();
+  clearBookingForm();
 }
 
-const booking = {
-date,
-startTime,
-endTime,
-color,
-comment
-};
-
-bookings.push(booking);
-saveBookings();
-renderCalendar();
-clearBookingForm();
-}
-
-function removeBooking() {
-  function removeBooking(booking) {
-    const confirmDelete = confirm("Tem certeza de que deseja remover esta reserva?");
-    if (confirmDelete) {
-        bookings.removeBooking(booking); // Use the passed booking
-        saveBookings();
-        renderCalendar(); // Re-render calendar after deletion
-    }
-}
-
-bookings.removeBooking(booking);
-saveBookings();
-renderCalendar();
-clearBookingForm();
-}
 
 function clearBookingForm() {
-document.getElementById('bookingDate').value = '';
-document.getElementById('bookingStartTime').value = '';
-document.getElementById('bookingEndTime').value = '';
-document.getElementById('bookingColor').value = '#ff0000';
-document.getElementById('bookingComment').value = '';
+  document.getElementById('bookingDate').value = '';
+  document.getElementById('bookingStartTime').value = '';
+  document.getElementById('bookingEndTime').value = '';
+  document.getElementById('bookingColor').value = '#ff0000';
+  document.getElementById('bookingComment').value = '';
 }
 
 function saveBookings() {
-localStorage.setItem('bookings', JSON.stringify(bookings));
+  localStorage.setItem('bookings', JSON.stringify(bookings));
 }
 
 function loadBookings() {
-const storedBookings = localStorage.getItem('bookings');
-if (storedBookings) {
-bookings.push(...JSON.parse(storedBookings));
-}
+  const storedBookings = localStorage.getItem('bookings');
+  if (storedBookings) {
+  bookings.push(...JSON.parse(storedBookings));
+  }
 }
 
 
@@ -462,6 +447,7 @@ function renderCalendar() {
     }
 }
 
+
 // Updated removeBooking function to accept a booking object
 function removeBooking(booking) {
     if (!booking) {
@@ -471,12 +457,12 @@ function removeBooking(booking) {
 
     bookings.removeBooking(booking); // Assuming this function exists in your bookings object
     saveBookings();
-    renderCalendar_1(); // Re-render the calendar
+    renderCalendar(); // Re-render the calendar
     clearBookingForm();
 }
 
 
-function renderCalendar_1() {
+function renderCalendar_ORIGINAL() {
 const calendar = document.getElementById('calendar');
 calendar.innerHTML = '';
 const month = currentDate.getMonth();
