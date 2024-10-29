@@ -386,24 +386,14 @@ clearBookingForm();
 }
 
 function removeBooking() {
-const date = document.getElementById('bookingDate').value;
-const startTime = document.getElementById('bookingStartTime').value;
-const endTime = document.getElementById('bookingEndTime').value;
-const color = document.getElementById('bookingColor').value;
-const comment = document.getElementById('bookingComment').value;
-
-if (!date || !startTime || !endTime) {
-alert("Por favor, preencha todas as informações de reserva.");
-return;
+  function removeBooking(booking) {
+    const confirmDelete = confirm("Tem certeza de que deseja remover esta reserva?");
+    if (confirmDelete) {
+        bookings.removeBooking(booking); // Use the passed booking
+        saveBookings();
+        renderCalendar(); // Re-render calendar after deletion
+    }
 }
-
-const booking = {
-date,
-startTime,
-endTime,
-color,
-comment
-};
 
 bookings.removeBooking(booking);
 saveBookings();
@@ -430,7 +420,63 @@ bookings.push(...JSON.parse(storedBookings));
 }
 }
 
+
 function renderCalendar() {
+    const calendar = document.getElementById('calendar');
+    calendar.innerHTML = '';
+    const month = currentDate.getMonth();
+    const year = currentDate.getFullYear();
+    document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'day';
+        calendar.appendChild(emptyCell);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'day';
+        dayDiv.innerText = day;
+        const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        // Check for bookings on this date
+        const bookingsForDay = bookings.filter(b => b.date === date);
+        bookingsForDay.forEach(b => {
+            const bookingDiv = document.createElement('div');
+            bookingDiv.className = 'booking';
+            bookingDiv.style.backgroundColor = b.color;
+            bookingDiv.innerText = `${b.startTime} - ${b.endTime} ${b.comment}`;
+
+            // Add event listener to remove booking on click
+            bookingDiv.addEventListener('click', () => {
+                removeBooking(b); // Pass the booking object to remove
+            });
+
+            dayDiv.appendChild(bookingDiv);
+        });
+
+        calendar.appendChild(dayDiv);
+    }
+}
+
+// Updated removeBooking function to accept a booking object
+function removeBooking(booking) {
+    if (!booking) {
+        alert("Booking information is required for removal.");
+        return;
+    }
+
+    bookings.removeBooking(booking); // Assuming this function exists in your bookings object
+    saveBookings();
+    renderCalendar_1(); // Re-render the calendar
+    clearBookingForm();
+}
+
+
+function renderCalendar_1() {
 const calendar = document.getElementById('calendar');
 calendar.innerHTML = '';
 const month = currentDate.getMonth();
