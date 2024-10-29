@@ -24,16 +24,13 @@ font-size: 2.3em;
 }
 h2 {
 cursor: grab;
-/*margin: 20px auto; /* Centers the header within the parent container */
-margin: 20px 0; /* Removes auto centering to start from the left */
+margin: 20px 0;
 font-size: 1.1em;
-/*background-color: #9fc2c6;*/
 background-color: lightblue;
 padding: 10px 15px;
 border-radius: 20px;
-width: 35%; /* Sets the width to 40% of the row */
-text-align:justify; /* Aligns text to the start */
-/*padding-left: 25%; /* Adds padding to the left for offset */
+width: 35%;
+text-align: justify;
 }
 h3 {
 margin: 0;
@@ -87,7 +84,7 @@ vertical-align: middle;
 width: 60%;
 }
 #bookingDate, #bookingStartTime, #bookingEndTime {
-width: 8%; /* Made date input smaller */
+width: 8%;
 }
 #saveBookingButton, #saveAthleteButton {
 padding: 10px 20px;
@@ -125,9 +122,9 @@ align-items: center;
 margin-bottom: 10px;
 }
 #calendar {
-display: grid; /* Use grid layout for calendar */
-grid-template-columns: repeat(7, 1fr); /* 7 columns for days of the week */
-gap: 5px; /* Space between grid items */
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+gap: 5px;
 width: 100%;
 }
 .day {
@@ -137,7 +134,7 @@ padding: 5px;
 text-align: center;
 position: relative;
 height: 80px;
-overflow: hidden; /* Prevent overflow of booking elements */
+overflow: hidden;
 }
 .booking {
 position: absolute;
@@ -147,19 +144,27 @@ text-align: center;
 line-height: 20px;
 border-radius: 4px;
 padding: 2px 0;
-bottom: 0; /* Align bookings at the bottom */
-margin-top: 2px; /* Allow stacking */
+bottom: 0;
+margin-top: 2px;
 }
 .day-header {
-display: grid; /* Use grid for day names */
-grid-template-columns: repeat(7, 1fr); /* Align with days of the week */
+display: grid;
+grid-template-columns: repeat(7, 1fr);
 font-weight: bold;
 margin-bottom: 5px;
-background-color: lightblue; /* Light blue background for the day header */
+background-color: lightblue;
 }
 .day-name {
-text-align: center; /* Center the day names */
-border: 1px solid #ddd; /* Add border to day names */
+text-align: center;
+border: 1px solid #ddd;
+}
+.escalão-header {
+font-size: 12px;
+font-weight: bold;
+color: blue;
+background-color: lightgray;
+padding: 8px;
+text-align: left;
 }
 </style>
 </head>
@@ -169,8 +174,7 @@ border: 1px solid #ddd; /* Add border to day names */
 <h1>Modalidade - Futsal</h1>
 <button id="homeButton" onclick="window.location.href='../index.html'">Voltar à página inicial</button>
 </header>
-<br></br>
-<br></br>
+<br><br>
 
 <!-- Functionality Sections -->
 <div class="functionality">
@@ -183,7 +187,7 @@ Procurar atleta   <span style="margin-left: 5px;">▼</span>
 </div>
 
 <div class="functionality">
-<h2 onclick="toggleDropdown('addDropdown')"> Adicionar atleta sjdjdjdjdjdjd <span>▼</span>
+<h2 onclick="toggleDropdown('addDropdown')"> Adicionar atleta <span>▼</span>
 </h2>
 <div id="addDropdown" class="dropdown">
 <input type="text" id="athleteName" placeholder="Nome" required>
@@ -200,7 +204,7 @@ Procurar atleta   <span style="margin-left: 5px;">▼</span>
 </h2>
 <div id="listDropdown" class="dropdown">
 <div id="athleteListContainer">
-<div id="athleteTables"></div> <!-- Container for athlete lists by escalão -->
+<div id="athleteTables"></div>
 </div>
 </div>
 </div>
@@ -241,13 +245,12 @@ Procurar atleta   <span style="margin-left: 5px;">▼</span>
 const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 let currentDate = new Date();
 const bookings = [];
-let athletes = []; // Array to hold athlete data
+let athletes = [];
 
-// Load athletes from localStorage if available
 window.onload = function() {
 loadAthletes();
 loadBookings();
-renderAthletes(); // Render athletes on page load
+renderAthletes();
 renderCalendar();
 };
 
@@ -263,13 +266,7 @@ const contact = document.getElementById('athleteContact').value;
 const escalão = document.getElementById('athleteEscalao').value;
 const comments = document.getElementById('athleteComments').value;
 
-const athlete = {
-name,
-parents,
-contact,
-escalão,
-comments
-};
+const athlete = { name, parents, contact, escalão, comments };
 athletes.push(athlete);
 saveAthletes();
 clearAthleteForm();
@@ -298,6 +295,7 @@ athletes = JSON.parse(storedAthletes);
 function renderAthletes() {
 const athleteTables = document.getElementById('athleteTables');
 athleteTables.innerHTML = '';
+
 const groupedAthletes = athletes.reduce((acc, athlete) => {
 acc[athlete.escalão] = acc[athlete.escalão] || [];
 acc[athlete.escalão].push(athlete);
@@ -305,40 +303,82 @@ return acc;
 }, {});
 
 for (const escalão in groupedAthletes) {
+  const tableHeader = document.createElement('h3');
+  tableHeader.className = 'escalão';
+  tableHeader.className = 'escalão-header';
+  tableHeader.textContent = `Escalão: ${escalão}`;
+  athleteTables.appendChild(tableHeader);
+
   const table = document.createElement('table');
   const headerRow = document.createElement('tr');
-  headerRow.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Ações</th>`;
+  
+  ['Nome', 'Pais', 'Contacto', 'Escalão', 'Comentários', 'Remover'].forEach(headerText => {
+    const th = document.createElement('th');
+    th.textContent = headerText;
+    headerRow.appendChild(th);
+  });
+
   table.appendChild(headerRow);
+
   groupedAthletes[escalão].forEach((athlete, index) => {
-  const row = document.createElement('tr');
-  row.innerHTML = ` 
-    <td>${athlete.name}</td>
-    <td>${athlete.parents}</td>
-    <td>${athlete.contact}</td>
-    <td>${athlete.escalão}</td>
-    <td>${athlete.comments}</td>
-    <td><span class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</span></td>`;
-table.appendChild(row);
-});
-athleteTables.appendChild(table);
+    const row = document.createElement('tr');
+    
+    Object.values(athlete).forEach(value => {
+      const cell = document.createElement('td');
+      cell.textContent = value;
+      row.appendChild(cell);
+    });
+
+    const removeCell = document.createElement('td');
+    removeCell.className = 'remove-athlete';
+    removeCell.textContent = 'Remover';
+    removeCell.onclick = () => removeAthlete(escalão, index);
+    row.appendChild(removeCell);
+
+    table.appendChild(row);
+  });
+
+  athleteTables.appendChild(table);
 }
 }
 
-function removeAthlete(index, escalão) {
-athletes = athletes.filter((_, i) => i !== index);
+function removeAthlete(escalão, index) {
+groupedAthletes[escalão].splice(index, 1);
 saveAthletes();
 renderAthletes();
 }
 
 function searchAthlete() {
-const input = document.getElementById('searchAthlete').value.toLowerCase();
-const athleteTables = document.getElementById('athleteTables');
-const rows = athleteTables.getElementsByTagName('tr');
-for (let i = 1; i < rows.length; i++) { // Skip header row
-const cells = rows[i].getElementsByTagName('td');
-const name = cells[0].innerText.toLowerCase();
-rows[i].style.display = name.includes(input) ? '' : 'none';
+const searchTerm = document.getElementById('searchAthlete').value.toLowerCase();
+const filteredAthletes = athletes.filter(athlete => athlete.name.toLowerCase().includes(searchTerm));
+renderFilteredAthletes(filteredAthletes);
 }
+
+function renderFilteredAthletes(filteredAthletes) {
+const athleteTables = document.getElementById('athleteTables');
+athleteTables.innerHTML = '';
+
+const table = document.createElement('table');
+const headerRow = document.createElement('tr');
+['Nome', 'Pais', 'Contacto', 'Escalão', 'Comentários'].forEach(headerText => {
+  const th = document.createElement('th');
+  th.textContent = headerText;
+  headerRow.appendChild(th);
+});
+
+table.appendChild(headerRow);
+
+filteredAthletes.forEach(athlete => {
+  const row = document.createElement('tr');
+  Object.values(athlete).forEach(value => {
+    const cell = document.createElement('td');
+    cell.textContent = value;
+    row.appendChild(cell);
+  });
+  table.appendChild(row);
+});
+
+athleteTables.appendChild(table);
 }
 
 function addBooking() {
@@ -348,31 +388,10 @@ const endTime = document.getElementById('bookingEndTime').value;
 const color = document.getElementById('bookingColor').value;
 const comment = document.getElementById('bookingComment').value;
 
-if (!date || !startTime || !endTime) {
-alert("Por favor, preencha todas as informações de reserva.");
-return;
-}
-
-const booking = {
-date,
-startTime,
-endTime,
-color,
-comment
-};
-
+const booking = { date, startTime, endTime, color, comment };
 bookings.push(booking);
 saveBookings();
 renderCalendar();
-clearBookingForm();
-}
-
-function clearBookingForm() {
-document.getElementById('bookingDate').value = '';
-document.getElementById('bookingStartTime').value = '';
-document.getElementById('bookingEndTime').value = '';
-document.getElementById('bookingColor').value = '#ff0000';
-document.getElementById('bookingComment').value = '';
 }
 
 function saveBookings() {
@@ -382,43 +401,42 @@ localStorage.setItem('bookings', JSON.stringify(bookings));
 function loadBookings() {
 const storedBookings = localStorage.getItem('bookings');
 if (storedBookings) {
-bookings.push(...JSON.parse(storedBookings));
+  bookings = JSON.parse(storedBookings);
 }
 }
 
 function renderCalendar() {
 const calendar = document.getElementById('calendar');
 calendar.innerHTML = '';
-const month = currentDate.getMonth();
-const year = currentDate.getFullYear();
-document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
+const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+const startDayOfWeek = firstDay.getDay();
 
-const firstDay = new Date(year, month, 1).getDay();
-const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-for (let i = 0; i < firstDay; i++) {
-const emptyCell = document.createElement('div');
-emptyCell.className = 'day';
-calendar.appendChild(emptyCell);
+for (let i = 0; i < startDayOfWeek; i++) {
+  const emptyDay = document.createElement('div');
+  emptyDay.className = 'day';
+  calendar.appendChild(emptyDay);
 }
 
-for (let day = 1; day <= daysInMonth; day++) {
-const dayDiv = document.createElement('div');
-dayDiv.className = 'day';
-dayDiv.innerText = day;
-const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-// Check for bookings on this date
-const bookingsForDay = bookings.filter(b => b.date === date);
-bookingsForDay.forEach(b => {
-const bookingDiv = document.createElement('div');
-bookingDiv.className = 'booking';
-bookingDiv.style.backgroundColor = b.color;
-bookingDiv.innerText = `${b.startTime} - ${b.endTime} ${b.comment}`;
-dayDiv.appendChild(bookingDiv);
-});
+for (let day = 1; day <= lastDay.getDate(); day++) {
+  const dayCell = document.createElement('div');
+  dayCell.className = 'day';
+  dayCell.textContent = day;
+  const currentDateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-calendar.appendChild(dayDiv);
+  bookings.forEach(booking => {
+    if (booking.date === currentDateStr) {
+      const bookingDiv = document.createElement('div');
+      bookingDiv.className = 'booking';
+      bookingDiv.style.backgroundColor = booking.color;
+      bookingDiv.textContent = `${booking.startTime} - ${booking.endTime}`;
+      dayCell.appendChild(bookingDiv);
+    }
+  });
+
+  calendar.appendChild(dayCell);
 }
+document.getElementById('currentMonth').textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
 }
 
 function changeMonth(offset) {
@@ -428,4 +446,4 @@ renderCalendar();
 </script>
 </body>
 </html>
-</html>
+
