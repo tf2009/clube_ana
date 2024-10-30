@@ -252,22 +252,17 @@
     let athletes = JSON.parse(localStorage.getItem(athletesKey)) || [];
     let bookings = JSON.parse(localStorage.getItem(bookingsKey)) || [];
 
-
-    function toggleDropdown(id) {
-        const dropdown = document.getElementById(id);
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    }
-
     function addAthlete() {
-        const name = document.getElementById('athleteName').value;
-        const parents = document.getElementById('athleteParents').value;
-        const contact = document.getElementById('athleteContact').value;
-        const escalão = document.getElementById('athleteEscalao').value;
-        const comments = document.getElementById('athleteComments').value;
+        const name = document.getElementById('athleteName').value.trim();
+        const parents = document.getElementById('athleteParents').value.trim();
+        const contact = document.getElementById('athleteContact').value.trim();
+        const escalão = document.getElementById('athleteEscalao').value.trim();
+        const comments = document.getElementById('athleteComments').value.trim();
 
         if (name && parents && contact && escalão) {
-            athletes.push({ name, parents, contact, escalão, comments });
-            localStorage.setItem('athletes', JSON.stringify(athletes));
+            const athlete = { name, parents, contact, escalão, comments };
+            athletes.push(athlete);
+            localStorage.setItem(athletesKey, JSON.stringify(athletes));
             document.getElementById('athleteName').value = '';
             document.getElementById('athleteParents').value = '';
             document.getElementById('athleteContact').value = '';
@@ -275,35 +270,33 @@
             document.getElementById('athleteComments').value = '';
             renderAthleteList();
         } else {
-            alert('Preencha todos os campos obrigatórios.');
+            alert("Por favor, preencha todos os campos obrigatórios.");
         }
     }
 
-    function renderAthleteList() {
-        const athleteTables = document.getElementById('athleteTables');
-        athleteTables.innerHTML = '';
+    function searchAthlete() {
+        const searchInput = document.getElementById('searchAthlete').value.toLowerCase();
+        const filteredAthletes = athletes.filter(athlete => athlete.name.toLowerCase().includes(searchInput));
+        renderAthleteList(filteredAthletes);
+    }
 
-        const groupedAthletes = athletes.reduce((groups, athlete) => {
-            if (!groups[athlete.escalão]) {
-                groups[athlete.escalão] = [];
-            }
-            groups[athlete.escalão].push(athlete);
-            return groups;
-        }, {});
+    function renderAthleteList(filteredAthletes = athletes) {
+        const athleteTablesContainer = document.getElementById('athleteTables');
+        athleteTablesContainer.innerHTML = '';
 
-        for (const escalão in groupedAthletes) {
+        const escaloes = [...new Set(filteredAthletes.map(athlete => athlete.escalão))];
+
+        escaloes.forEach(escalão => {
             const table = document.createElement('table');
-            table.innerHTML = `
-                <tr>
-                    <th>Nome</th>
-                    <th>Pais</th>
-                    <th>Contacto</th>
-                    <th>Escalão</th>
-                    <th>Comentários</th>
-                    <th>Remover</th>
-                </tr>
-            `;
-            groupedAthletes[escalão].forEach(athlete => {
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Remover</th>`;
+            thead.appendChild(headerRow);
+
+            const escalãoAthletes = filteredAthletes.filter(athlete => athlete.escalão === escalão);
+            escalãoAthletes.forEach(athlete => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${athlete.name}</td>
@@ -311,21 +304,20 @@
                     <td>${athlete.contact}</td>
                     <td>${athlete.escalão}</td>
                     <td>${athlete.comments}</td>
-                    <td><span class="remove-athlete" onclick="removeAthlete('${athlete.name}')">Remover</span></td>
+                    <td class="remove-athlete" onclick="removeAthlete('${athlete.name}')">Remover</td>
                 `;
-                table.appendChild(row);
+                tbody.appendChild(row);
             });
-            athleteTables.appendChild(table);
-            const escalãoHeader = document.createElement('div');
-            escalãoHeader.className = 'escalão-header';
-            escalãoHeader.innerText = escalão;
-            athleteTables.insertBefore(escalãoHeader, table);
-        }
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            athleteTablesContainer.appendChild(table);
+        });
     }
 
     function removeAthlete(name) {
         athletes = athletes.filter(athlete => athlete.name !== name);
-        localStorage.setItem('athletes', JSON.stringify(athletes));
+        localStorage.setItem(athletesKey, JSON.stringify(athletes));
         renderAthleteList();
     }
 
@@ -337,67 +329,56 @@
         const comment = document.getElementById('bookingComment').value;
 
         if (date && startTime && endTime) {
-            bookings.push({ date, startTime, endTime, color, comment });
-            localStorage.setItem('bookings', JSON.stringify(bookings));
+            const booking = { date, startTime, endTime, color, comment };
+            bookings.push(booking);
+            localStorage.setItem(bookingsKey, JSON.stringify(bookings));
+            renderCalendar();
             document.getElementById('bookingDate').value = '';
             document.getElementById('bookingStartTime').value = '';
             document.getElementById('bookingEndTime').value = '';
-            document.getElementById('bookingColor').value = '#ff0000'; // Reset color to default
+            document.getElementById('bookingColor').value = '#ff0000'; // Reset to default color
             document.getElementById('bookingComment').value = '';
-            renderCalendar();
         } else {
-            alert('Preencha todos os campos obrigatórios.');
+            alert("Por favor, preencha todos os campos obrigatórios.");
         }
     }
 
     function clearAllBookings() {
-        bookings = []; // Clear all bookings
-        localStorage.setItem('bookings', JSON.stringify(bookings));
-        renderCalendar(); // Update the calendar display
+        bookings = []; // Clear the bookings array
+        localStorage.setItem(bookingsKey, JSON.stringify(bookings));
+        renderCalendar();
     }
 
     function renderCalendar() {
-        const calendarElement = document.getElementById('calendar');
-        calendarElement.innerHTML = ''; // Clear the calendar
+        const calendar = document.getElementById('calendar');
+        calendar.innerHTML = '';
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-        document.getElementById('currentMonth').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'day';
+            dayDiv.innerHTML = `<strong>${day}</strong>`;
 
-        const firstDay = new Date(currentYear, currentMonth, 1);
-        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            // Create a header for the day
+            const dayHeader = document.createElement('div');
+            dayHeader.className = 'day-name';
+            dayHeader.textContent = new Date(dateString).toLocaleDateString('pt-PT', { weekday: 'long' });
+            dayDiv.appendChild(dayHeader);
 
-        for (let i = 0; i < firstDay.getDay(); i++) {
-            const emptyCell = document.createElement('div');
-            emptyCell.classList.add('day');
-            calendarElement.appendChild(emptyCell);
-        }
-
-        for (let day = 1; day <= lastDay.getDate(); day++) {
-            const dayCell = document.createElement('div');
-            dayCell.classList.add('day');
-            dayCell.innerText = day;
-            dayCell.setAttribute('data-date', `${currentYear}-${currentMonth + 1}-${day}`); // Store date for later use
-
-            bookings.forEach(booking => {
-                const bookingDate = new Date(booking.date);
-                if (bookingDate.getDate() === day && bookingDate.getFullYear() === currentYear && bookingDate.getMonth() === currentMonth) {
-                    const bookingElement = document.createElement('div');
-                    bookingElement.classList.add('booking');
-                    bookingElement.style.backgroundColor = booking.color;
-                    bookingElement.innerText = `${booking.startTime} - ${booking.endTime} (${booking.comment})`;
-                    bookingElement.onclick = () => removeBooking(booking); // Remove booking on click
-                    dayCell.appendChild(bookingElement);
-                }
+            const dayBookings = bookings.filter(booking => booking.date === dateString);
+            dayBookings.forEach(booking => {
+                const bookingDiv = document.createElement('div');
+                bookingDiv.className = 'booking';
+                bookingDiv.style.backgroundColor = booking.color;
+                bookingDiv.textContent = `${booking.startTime} - ${booking.endTime}: ${booking.comment}`;
+                dayDiv.appendChild(bookingDiv);
             });
 
-            calendarElement.appendChild(dayCell);
+            calendar.appendChild(dayDiv);
         }
-    }
 
-    function removeBooking(bookingToRemove) {
-        bookings = bookings.filter(booking => booking !== bookingToRemove);
-        localStorage.setItem('bookings', JSON.stringify(bookings));
-        renderCalendar(); // Update the calendar display after removal
+        document.getElementById('currentMonth').textContent = new Date(currentYear, currentMonth).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' });
     }
 
     function changeMonth(direction) {
@@ -409,34 +390,19 @@
             currentMonth = 0;
             currentYear++;
         }
-        renderCalendar(); // Re-render calendar when month changes
+        renderCalendar();
     }
 
-    function searchAthlete() {
-        const searchTerm = document.getElementById('searchAthlete').value.toLowerCase();
-        const athleteTables = document.getElementById('athleteTables');
-        const tables = athleteTables.getElementsByTagName('table');
-
-        for (const table of tables) {
-            let found = false;
-            const rows = table.getElementsByTagName('tr');
-
-            for (let i = 1; i < rows.length; i++) { // Start from 1 to skip header
-                const cells = rows[i].getElementsByTagName('td');
-                if (cells[0].innerText.toLowerCase().includes(searchTerm)) {
-                    rows[i].style.display = ''; // Show row
-                    found = true;
-                } else {
-                    rows[i].style.display = 'none'; // Hide row
-                }
-            }
-            table.style.display = found ? '' : 'none'; // Show or hide table based on search result
-        }
+    function toggleDropdown(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ? 'block' : 'none';
     }
 
-    // Initial render calls
-    renderAthleteList();
-    renderCalendar();
+    // Initialize the calendar and athlete list
+    document.addEventListener('DOMContentLoaded', () => {
+        renderCalendar();
+        renderAthleteList();
+    });
 </script>
 </body>
 </html>
