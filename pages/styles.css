@@ -33,9 +33,11 @@ section {
 form input {
     margin-right: 10px;
 }
+
 table {
     font-size: 8px; /* Adjust the size as needed */
 }
+
 th, td {
     font-size: inherit; /* Ensures th takes font-size from table */
 }
@@ -116,6 +118,11 @@ th, td {
     height: 80px; /* Adjusted for better visibility */
     cursor: pointer;
     position: relative; /* Needed for booking placement */
+}
+
+.day.saturday,
+.day.sunday {
+    background-color: lightpink; /* Light pink for weekends */
 }
 
 .booking {

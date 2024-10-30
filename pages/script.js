@@ -146,83 +146,69 @@ function removeBooking(dateKey, index) {
     }
 }
 
-// Render calendar
+// Function to render the calendar
 function renderCalendar() {
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
+    const calendarElement = document.getElementById('calendar');
+    calendarElement.innerHTML = ''; // Clear the calendar
 
-    document.getElementById('currentMonth').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+    const monthDays = new Date(currentYear, currentMonth + 1, 0).getDate(); // Total days in the month
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay(); // First day of the month
+    const dayHeader = document.createElement('div');
+    dayHeader.classList.add('day-header');
 
-    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const calendarBody = document.getElementById('calendar');
-    calendarBody.innerHTML = ''; // Clear previous calendar
-
-    // Create day names row
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const dayNamesRow = document.createElement('div');
-    dayNamesRow.classList.add('day-names');
-
-    dayNames.forEach(day => {
-        const dayDiv = document.createElement('div');
-        dayDiv.textContent = day;
-        dayNamesRow.appendChild(dayDiv);
+    const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    daysOfWeek.forEach(day => {
+        const dayCell = document.createElement('div');
+        dayCell.classList.add('day-name');
+        dayCell.innerText = day;
+        dayHeader.appendChild(dayCell);
     });
 
-    calendarBody.appendChild(dayNamesRow); // Append the day names row
+    calendarElement.appendChild(dayHeader);
 
-    let date = 1;
+    // Create a grid for the calendar days
+    const calendarGrid = document.createElement('div');
+    calendarGrid.classList.add('calendar-grid');
 
-    // Create 6 rows to cover all possible weeks in a month
-    for (let i = 0; i < 6; i++) {
-        const weekRow = document.createElement('div');
-        weekRow.classList.add('week');
-
-        for (let j = 0; j < 7; j++) {
-            const dayCell = document.createElement('div');
-            dayCell.classList.add('day');
-
-            if (i === 0 && j < firstDayOfMonth) {
-                // Empty cell
-                dayCell.classList.add('empty');
-            } else if (date > daysInMonth) {
-                break; // Exit if we exceed the number of days in the month
-            } else {
-                dayCell.textContent = date;
-
-                // Show bookings for the current day
-                const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
-                if (bookings[dateKey]) {
-                    bookings[dateKey].forEach((booking, index) => {
-                        const bookingDiv = document.createElement("div");
-                        bookingDiv.className = "booking";
-                        bookingDiv.style.backgroundColor = booking.color; // Set background color from booking
-                        bookingDiv.textContent = `${booking.start} - ${booking.end}: ${booking.comment}`; // Show time slot and comment
-
-                        // Add a remove button to each booking
-                        const removeButton = document.createElement("button");
-                        removeButton.textContent = "Remove";
-                        removeButton.style.backgroundColor = "green"; // Set button color to green
-                        removeButton.style.color = "white"; // Set button text color to white
-                        removeButton.onclick = () => removeBooking(dateKey, index);
-                        bookingDiv.appendChild(removeButton);
-
-                        // Add click event to the bookingDiv to remove the booking
-                        bookingDiv.onclick = () => removeBooking(dateKey, index);
-
-                        dayCell.appendChild(bookingDiv);
-                    });
-                }
-
-                dayCell.onclick = () => {
-                    alert(`Selected date: ${date} ${monthNames[currentMonth]} ${currentYear}`);
-                };
-                date++;
-            }
-            weekRow.appendChild(dayCell);
-        }
-        calendarBody.appendChild(weekRow);
+    // Add empty cells for the days before the first day of the month
+    for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.classList.add('day');
+        calendarGrid.appendChild(emptyCell);
     }
+
+    // Add the actual days of the month
+    for (let day = 1; day <= monthDays; day++) {
+        const dayCell = document.createElement('div');
+        dayCell.classList.add('day');
+        dayCell.innerText = day;
+        dayCell.setAttribute('data-date', `${currentYear}-${currentMonth + 1}-${day}`); // Set date for booking
+
+        // Add light pink background for Saturdays and Sundays
+        const date = new Date(currentYear, currentMonth, day);
+        if (date.getDay() === 0 || date.getDay() === 6) { // Sunday or Saturday
+            dayCell.style.backgroundColor = '#ffcccc'; // Light pink color
+        }
+
+        // Add bookings to the cell
+        const dayBookings = bookings.filter(b => b.date === `${currentYear}-${currentMonth + 1}-${day}`);
+        dayBookings.forEach(b => {
+            const bookingElement = document.createElement('div');
+            bookingElement.classList.add('booking');
+            bookingElement.style.backgroundColor = b.color;
+            bookingElement.innerText = `${b.startTime} - ${b.endTime}\n${b.comment}`;
+            dayCell.appendChild(bookingElement);
+        });
+
+        dayCell.onclick = function () {
+            alert(`Date: ${dayCell.getAttribute('data-date')}\nBookings:\n${dayBookings.map(b => `${b.startTime} - ${b.endTime}: ${b.comment}`).join('\n')}`);
+        };
+
+        calendarGrid.appendChild(dayCell);
+    }
+
+    calendarElement.appendChild(calendarGrid);
+    document.getElementById('currentMonth').innerText = `${currentDate.toLocaleString('default', { month: 'long' })} ${currentYear}`;
 }
 
 // Function to navigate to the previous month
