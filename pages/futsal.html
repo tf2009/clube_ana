@@ -240,7 +240,7 @@
 </div>
 
 <script>
-    let Athletes_futsal = JSON.parse(localStorage.getItem('Athletes_futsal')) || [];
+    let athletes = JSON.parse(localStorage.getItem('athletes')) || [];
     let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
     let currentDate = new Date();
     let currentMonth = currentDate.getMonth();
@@ -251,83 +251,83 @@
         dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
     }
 
-    function addAthlete_futsal() {
-        const name = document.getElementById('Athlete_futsalName').value.trim();
-        const parents = document.getElementById('Athlete_futsalParents').value.trim();
-        const contact = document.getElementById('Athlete_futsalContact').value.trim();
-        const escalão = document.getElementById('Athlete_futsalEscalao').value.trim();
-        const comments = document.getElementById('Athlete_futsalComments').value.trim();
+    function addAthlete() {
+        const name = document.getElementById('athleteName').value.trim();
+        const parents = document.getElementById('athleteParents').value.trim();
+        const contact = document.getElementById('athleteContact').value.trim();
+        const escalão = document.getElementById('athleteEscalao').value.trim();
+        const comments = document.getElementById('athleteComments').value.trim();
 
         if (name && parents && contact && escalão) {
-            const athlete_futsal = { name, parents, contact, escalão, comments };
-            Athletes_futsal_futsal.push(athlete_futsal);
-            localStorage.setItem('Athletes_futsal_futsal', JSON.stringify(Athletes_futsal_futsal));
-            displayAthletes_futsal(); // Update the athlete list
+            const athlete = { name, parents, contact, escalão, comments };
+            athletes.push(athlete);
+            localStorage.setItem('athletes', JSON.stringify(athletes));
+            displayAthletes(); // Update the athlete list
             clearAthleteForm();
         } else {
             alert('Por favor, preencha todos os campos obrigatórios.');
         }
     }
 
-    function clearAthlete_futsalForm() {
-        document.getElementById('Athlete_futsalName').value = '';
-        document.getElementById('Athlete_futsalParents').value = '';
-        document.getElementById('Athlete_futsalContact').value = '';
-        document.getElementById('Athlete_futsalEscalao').value = '';
-        document.getElementById('Athlete_futsalComments').value = '';
+    function clearAthleteForm() {
+        document.getElementById('athleteName').value = '';
+        document.getElementById('athleteParents').value = '';
+        document.getElementById('athleteContact').value = '';
+        document.getElementById('athleteEscalao').value = '';
+        document.getElementById('athleteComments').value = '';
     }
 
-    function displayAthletes_futsal() {
-        const Athlete_futsalTablesContainer = document.getElementById('Athlete_futsalTables');
-        athlete_futsalTablesContainer.innerHTML = ''; // Clear existing tables
+    function displayAthletes() {
+        const athleteTablesContainer = document.getElementById('athleteTables');
+        athleteTablesContainer.innerHTML = ''; // Clear existing tables
 
-        const groupedathlete_futsal = athlete_futsal.reduce((acc, athlete_futsal) => {
-            acc[athlete_futsal.escalão] = acc[athlete_futsal.escalão] || [];
-            acc[athlete_futsal.escalão].push(athlete_futsal);
+        const groupedAthletes = athletes.reduce((acc, athlete) => {
+            acc[athlete.escalão] = acc[athlete.escalão] || [];
+            acc[athlete.escalão].push(athlete);
             return acc;
         }, {});
 
-        for (const escalão in groupedathlete_futsal) {
-            const athletes_futsalList = groupedathletes_futsal[escalão];
+        for (const escalão in groupedAthletes) {
+            const athletesList = groupedAthletes[escalão];
             let tableHTML = `<div class="escalão-header">${escalão}</div><table><thead><tr><th>Nome</th><th>Pais</th><th>Contacto</th><th>Comentários</th><th>Remover</th></tr></thead><tbody>`;
-            athletes_futsalList.forEach((athlete_futsal, index) => {
-                tableHTML += `<tr><td>${athlete_futsal.name}</td><td>${athlete_futsal.parents}</td><td>${athlete_futsal.contact}</td><td>${athlete_futsal.comments}</td><td><span class="remove-athlete_futsal" onclick="removeathlete_futsal(${index})">Remover</span></td></tr>`;
+            athletesList.forEach((athlete, index) => {
+                tableHTML += `<tr><td>${athlete.name}</td><td>${athlete.parents}</td><td>${athlete.contact}</td><td>${athlete.comments}</td><td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td></tr>`;
             });
             tableHTML += `</tbody></table>`;
-            athlete_futsalTablesContainer.innerHTML += tableHTML;
+            athleteTablesContainer.innerHTML += tableHTML;
         }
     }
 
-    function removeathlete_futsal(index) {
-        athletes_futsal.splice(index, 1);
-        localStorage.setItem('athletes_futsal', JSON.stringify(athletes_futsal));
-        displayathletes_futsal();
+    function removeAthlete(index) {
+        athletes.splice(index, 1);
+        localStorage.setItem('athletes', JSON.stringify(athletes));
+        displayAthletes();
     }
 
-    function searchathlete_futsal() {
-        const query = document.getElementById('searchathlete_futsal').value.toLowerCase();
-        const filteredathletes_futsal = athletes_futsal.filter(athlete_futsal => athlete_futsal.name.toLowerCase().includes(query));
-        displayFilteredAthletes_futsal(filteredAthletes_futsal);
+    function searchAthlete() {
+        const query = document.getElementById('searchAthlete').value.toLowerCase();
+        const filteredAthletes = athletes.filter(athlete => athlete.name.toLowerCase().includes(query));
+        displayFilteredAthletes(filteredAthletes);
     }
 
-    function displayFilteredathletes_futsal(filteredathletes_futsal) {
-        const athlete_futsalTablesContainer = document.getElementById('athlete_futsalTables');
-        athlete_futsalTablesContainer.innerHTML = '';
+    function displayFilteredAthletes(filteredAthletes) {
+        const athleteTablesContainer = document.getElementById('athleteTables');
+        athleteTablesContainer.innerHTML = '';
 
-        const groupedathletes_futsal = filteredathletes_futsal.reduce((acc, athlete) => {
-            acc[athlete_futsal.escalão] = acc[athlete_futsal.escalão] || [];
-            acc[athlete_futsal.escalão].push(athlete_futsal);
+        const groupedAthletes = filteredAthletes.reduce((acc, athlete) => {
+            acc[athlete.escalão] = acc[athlete.escalão] || [];
+            acc[athlete.escalão].push(athlete);
             return acc;
         }, {});
 
-        for (const escalão in groupedathletes_futsal) {
-            const athletes_futsalList = groupedathletes_futsal[escalão];
+        for (const escalão in groupedAthletes) {
+            const athletesList = groupedAthletes[escalão];
             let tableHTML = `<div class="escalão-header">${escalão}</div><table><thead><tr><th>Nome</th><th>Pais</th><th>Contacto</th><th>Comentários</th><th>Remover</th></tr></thead><tbody>`;
-            athletes_futsalList.forEach((athlete_futsal, index) => {
-                tableHTML += `<tr><td>${athlete_futsal.name}</td><td>${athlete_futsal.parents}</td><td>${athlete_futsal.contact}</td><td>${athlete_futsal.comments}</td><td><span class="remove-athlete_futsal" onclick="removeathlete_futsal(${index})">Remover</span></td></tr>`;
+            athletesList.forEach((athlete, index) => {
+                tableHTML += `<tr><td>${athlete.name}</td><td>${athlete.parents}</td><td>${athlete.contact}</td><td>${athlete.comments}</td><td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td></tr>`;
             });
             tableHTML += `</tbody></table>`;
-            athlete_futsalTablesContainer.innerHTML += tableHTML;
+            athleteTablesContainer.innerHTML += tableHTML;
         }
     }
 
@@ -409,7 +409,7 @@
     }
 
     window.onload = function() {
-        displayathletes_futsal();
+        displayAthletes();
         renderCalendar();
     };
 </script>
