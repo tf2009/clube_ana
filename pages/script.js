@@ -4,15 +4,12 @@ const monthNames = [
 ];
 
 let currentDate = new Date();
-//const bookings = {}; // Use an object to store bookings by date
-//let athletes = [];
 // Define unique keys for each sport
 const athletesKey = 'athletes_futsal'; // Change this key for judo.html
 const bookingsKey = 'bookings_futsal'; // Change this key for judo.html
 
 let athletes = JSON.parse(localStorage.getItem(athletesKey)) || [];
 let bookings = JSON.parse(localStorage.getItem(bookingsKey)) || [];
-
 
 // Define colors for each escalão
 const escalãoColors = {
@@ -22,9 +19,6 @@ const escalãoColors = {
     "juniores": "#f9cb9c",
     "Seniores": "#e6a9e3"
 };
-
-
-// ... rest of your JavaScript code ...
 
 // Load athletes from local storage when the page loads
 window.onload = function() {
@@ -228,49 +222,17 @@ function renderCalendar() {
             weekRow.appendChild(dayCell);
         }
         calendarBody.appendChild(weekRow);
-        
-        if (date > daysInMonth) {
-            break; // Exit if we have added all days in the month
-        }
     }
 }
 
-// Function to clear all bookings for the displayed month
-function clearBookingsForMonth() {
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
-
-    // Create an array to hold keys of dates to delete
-    const keysToDelete = [];
-
-    // Check each booking date
-    for (const dateKey in bookings) {
-        // Parse the dateKey into a Date object
-        const date = new Date(dateKey);
-        
-        // Only add to keysToDelete if the booking is in the current month and year
-        if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
-            keysToDelete.push(dateKey);
-        }
-    }
-
-    // Delete the bookings for those keys
-    keysToDelete.forEach(key => delete bookings[key]);
-
-    renderCalendar(); // Refresh the calendar to reflect the changes
-}
-
-
-// Event listener for the clear bookings button
-document.getElementById('clearBookingsButton').onclick = clearBookingsForMonth;
-
-// Navigation functions
-function goToPreviousMonth() {
+// Function to navigate to the previous month
+function previousMonth() {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();
 }
 
-function goToNextMonth() {
+// Function to navigate to the next month
+function nextMonth() {
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar();
 }
