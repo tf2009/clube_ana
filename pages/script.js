@@ -220,18 +220,36 @@ function renderCalendar() {
         calendarBody.appendChild(weekRow);
         
         if (date > daysInMonth) {
-            break; // Exit if we have filled all days
+            break; // Exit if we have added all days in the month
         }
     }
 }
 
-// Event listeners for the month navigation buttons
-document.getElementById('prevMonthButton').addEventListener('click', () => {
+// Function to clear all bookings for the displayed month
+function clearBookingsForMonth() {
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    // Filter out any bookings that are not in the current month and year
+    for (let dateKey in bookings) {
+        const [year, month] = dateKey.split('-').map(Number);
+        
+        if (year === currentYear && month - 1 === currentMonth) {
+            delete bookings[dateKey]; // Clear the bookings for this date
+        }
+    }
+    renderCalendar(); // Refresh the calendar to show the cleared month
+}
+
+// Change to the previous month
+function prevMonth() {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();
-});
+}
 
-document.getElementById('nextMonthButton').addEventListener('click', () => {
+// Change to the next month
+function nextMonth() {
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar();
-});
+}
+

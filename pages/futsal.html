@@ -24,16 +24,13 @@ font-size: 2.3em;
 }
 h2 {
 cursor: grab;
-/*margin: 20px auto; /* Centers the header within the parent container */
 margin: 20px 0; /* Removes auto centering to start from the left */
 font-size: 1.1em;
-/*background-color: #9fc2c6;*/
 background-color: lightblue;
 padding: 10px 15px;
 border-radius: 20px;
 width: 35%; /* Sets the width to 40% of the row */
 text-align:justify; /* Aligns text to the start */
-/*padding-left: 25%; /* Adds padding to the left for offset */
 }
 h3 {
 margin: 0;
@@ -223,7 +220,7 @@ Procurar atleta   <span style="margin-left: 5px;">▼</span>
 <input type="color" id="bookingColor" value="#ff0000">
 <input type="text" id="bookingComment" placeholder="Comentários sobre a marcação">
 <button id="saveBookingButton" onclick="addBooking()">Adicionar Marcação</button>
-<button id="saveBookingButton" onclick="removeBooking()">Remover Marcação</button>
+<button id="removeBookingButton" onclick="removeBooking()">Remover Marcação</button>
 </div>
 </div>
 
@@ -305,207 +302,149 @@ athletes = JSON.parse(storedAthletes);
 }
 
 function renderAthletes() {
-const athleteTables = document.getElementById('athleteTables');
-athleteTables.innerHTML = '';
-const groupedAthletes = athletes.reduce((acc, athlete) => {
-acc[athlete.escalão] = acc[athlete.escalão] || [];
-acc[athlete.escalão].push(athlete);
-return acc;
-}, {});
-
-for (const escalão in groupedAthletes) {
-  //header para cada tabela de jogadores
-  const tableHeader = document.createElement('h3');
-  tableHeader.className = 'escalão';
-  tableHeader.className = 'escalão-header';
-  tableHeader.textContent = `Escalão: ${escalão}`;
-  athleteTables.appendChild(tableHeader);
-  
-  //tabela propriamente dita com os titulos de 
-  //cada seccão e jogadores inscritos
-  const table = document.createElement('table');
-  const headerRow = document.createElement('tr');
-  headerRow.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Ações</th>`;
-  table.appendChild(headerRow);
-  groupedAthletes[escalão].forEach((athlete, index) => {
-  const row = document.createElement('tr');
-  row.innerHTML = ` 
-    <td>${athlete.name}</td>
-    <td>${athlete.parents}</td>
-    <td>${athlete.contact}</td>
-    <td>${athlete.escalão}</td>
-    <td>${athlete.comments}</td>
-    <td><span class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</span></td>`;
-table.appendChild(row);
+const athleteTables = {};
+athletes.forEach(athlete => {
+if (!athleteTables[athlete.escalão]) {
+athleteTables[athlete.escalão] = [];
+}
+athleteTables[athlete.escalão].push(athlete);
 });
-athleteTables.appendChild(table);
+
+const athleteListContainer = document.getElementById('athleteTables');
+athleteListContainer.innerHTML = ''; // Clear previous content
+
+for (const escalão in athleteTables) {
+const table = document.createElement('table');
+const headerRow = document.createElement('tr');
+headerRow.innerHTML = `<th colspan="5" class="escalão-header">${escalão}</th>`;
+table.appendChild(headerRow);
+const body = document.createElement('tbody');
+
+athleteTables[escalão].forEach(athlete => {
+const row = document.createElement('tr');
+row.innerHTML = `
+<td>${athlete.name}</td>
+<td>${athlete.parents}</td>
+<td>${athlete.contact}</td>
+<td>${athlete.escalão}</td>
+<td class="remove-athlete" onclick="removeAthlete('${athlete.name}')">Remover</td>
+`;
+body.appendChild(row);
+});
+
+table.appendChild(body);
+athleteListContainer.appendChild(table);
 }
 }
 
-function removeAthlete(index, escalão) {
-athletes = athletes.filter((_, i) => i !== index);
+function removeAthlete(name) {
+athletes = athletes.filter(athlete => athlete.name !== name);
 saveAthletes();
 renderAthletes();
 }
 
-function searchAthlete() {
-const input = document.getElementById('searchAthlete').value.toLowerCase();
-const athleteTables = document.getElementById('athleteTables');
-const rows = athleteTables.getElementsByTagName('tr');
-for (let i = 1; i < rows.length; i++) { // Skip header row
-const cells = rows[i].getElementsByTagName('td');
-const name = cells[0].innerText.toLowerCase();
-rows[i].style.display = name.includes(input) ? '' : 'none';
+function loadBookings() {
+const storedBookings = localStorage.getItem('bookings');
+if (storedBookings) {
+const loadedBookings = JSON.parse(storedBookings);
+loadedBookings.forEach(booking => {
+booking.date = new Date(booking.date);
+bookings.push(booking);
+});
 }
 }
 
 function addBooking() {
-  const date = document.getElementById('bookingDate').value;
-  const startTime = document.getElementById('bookingStartTime').value;
-  const endTime = document.getElementById('bookingEndTime').value;
-  const color = document.getElementById('bookingColor').value;
-  const comment = document.getElementById('bookingComment').value;
+const bookingDate = document.getElementById('bookingDate').value;
+const bookingStartTime = document.getElementById('bookingStartTime').value;
+const bookingEndTime = document.getElementById('bookingEndTime').value;
+const bookingColor = document.getElementById('bookingColor').value;
+const bookingComment = document.getElementById('bookingComment').value;
 
-  if (!date || !startTime || !endTime) {
-  alert("Por favor, preencha todas as informações de reserva.");
-  return;
-  }
+const booking = {
+date: bookingDate,
+startTime: bookingStartTime,
+endTime: bookingEndTime,
+color: bookingColor,
+comment: bookingComment
+};
 
-  const booking = {
-  date,
-  startTime,
-  endTime,
-  color,
-  comment
-  };
-
-  bookings.push(booking);
-  saveBookings();
-  renderCalendar();
-  clearBookingForm();
+bookings.push(booking);
+saveBookings();
+renderCalendar();
 }
 
+function removeBooking() {
+const bookingDate = document.getElementById('bookingDate').value;
+const bookingStartTime = document.getElementById('bookingStartTime').value;
 
-function clearBookingForm() {
-  document.getElementById('bookingDate').value = '';
-  document.getElementById('bookingStartTime').value = '';
-  document.getElementById('bookingEndTime').value = '';
-  document.getElementById('bookingColor').value = '#ff0000';
-  document.getElementById('bookingComment').value = '';
+bookings.forEach((booking, index) => {
+if (booking.date === bookingDate && booking.startTime === bookingStartTime) {
+bookings.splice(index, 1); // Remove the booking
+}
+});
+
+saveBookings();
+renderCalendar();
 }
 
 function saveBookings() {
-  localStorage.setItem('bookings', JSON.stringify(bookings));
+localStorage.setItem('bookings', JSON.stringify(bookings));
 }
-
-function loadBookings() {
-  const storedBookings = localStorage.getItem('bookings');
-  if (storedBookings) {
-  bookings.push(...JSON.parse(storedBookings));
-  }
-}
-
 
 function renderCalendar() {
-    const calendar = document.getElementById('calendar');
-    calendar.innerHTML = '';
-    const month = currentDate.getMonth();
-    const year = currentDate.getFullYear();
-    document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    for (let i = 0; i < firstDay; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = 'day';
-        calendar.appendChild(emptyCell);
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'day';
-        dayDiv.innerText = day;
-        const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        
-        // Check for bookings on this date
-        const bookingsForDay = bookings.filter(b => b.date === date);
-        bookingsForDay.forEach(b => {
-            const bookingDiv = document.createElement('div');
-            bookingDiv.className = 'booking';
-            bookingDiv.style.backgroundColor = b.color;
-            bookingDiv.innerText = `${b.startTime} - ${b.endTime} ${b.comment}`;
-
-            // Add event listener to remove booking on click
-            bookingDiv.addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevent the event from bubbling up
-                console.log('Booking clicked:', b); // Log booking info for debugging
-                removeBooking(b); // Pass the booking object to remove
-            });
-
-            dayDiv.appendChild(bookingDiv);
-        });
-
-        calendar.appendChild(dayDiv);
-    }
-}
-
-
-// Updated removeBooking function to accept a booking object
-function removeBooking(booking) {
-    if (!booking) {
-        alert("Booking information is required for removal.");
-        return;
-    }
-
-    console.log('Removing booking:', booking); // Log booking being removed
-    bookings.removeBooking(booking); // Assuming this function exists in your bookings object
-    saveBookings();
-    renderCalendar_1(); // Re-render the calendar
-    clearBookingForm();
-}
-
-
-function renderCalendar_ORIGINAL() {
 const calendar = document.getElementById('calendar');
-calendar.innerHTML = '';
-const month = currentDate.getMonth();
-const year = currentDate.getFullYear();
-document.getElementById('currentMonth').innerText = `${monthNames[month]} ${year}`;
+calendar.innerHTML = ''; // Clear previous calendar
 
-const firstDay = new Date(year, month, 1).getDay();
-const daysInMonth = new Date(year, month + 1, 0).getDate();
+const currentMonth = currentDate.getMonth();
+const currentYear = currentDate.getFullYear();
+document.getElementById('currentMonth').innerText = `${monthNames[currentMonth]} ${currentYear}`;
 
+const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+// Add empty days for the first week
 for (let i = 0; i < firstDay; i++) {
-const emptyCell = document.createElement('div');
-emptyCell.className = 'day';
-calendar.appendChild(emptyCell);
+const emptyDay = document.createElement('div');
+emptyDay.classList.add('day');
+calendar.appendChild(emptyDay);
 }
 
+// Create calendar days
 for (let day = 1; day <= daysInMonth; day++) {
 const dayDiv = document.createElement('div');
-dayDiv.className = 'day';
+dayDiv.classList.add('day');
 dayDiv.innerText = day;
-const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-// Check for bookings on this date
-const bookingsForDay = bookings.filter(b => b.date === date);
-bookingsForDay.forEach(b => {
+
+const dayBookings = bookings.filter(booking => {
+const bookingDate = new Date(booking.date);
+return bookingDate.getDate() === day && bookingDate.getMonth() === currentMonth && bookingDate.getFullYear() === currentYear;
+});
+
+// Add booking elements to the day
+dayBookings.forEach(booking => {
 const bookingDiv = document.createElement('div');
-bookingDiv.className = 'booking';
-bookingDiv.style.backgroundColor = b.color;
-bookingDiv.innerText = `${b.startTime} - ${b.endTime} ${b.comment}`;
+bookingDiv.classList.add('booking');
+bookingDiv.style.backgroundColor = booking.color; // Use the booking color
+bookingDiv.innerText = `${booking.startTime} - ${booking.endTime}\n${booking.comment}`;
 dayDiv.appendChild(bookingDiv);
 });
+
+// Add event listener to the dayDiv for removing bookings
+dayDiv.onclick = function(event) {
+if (dayBookings.length > 0) {
+removeBooking(day, dayBookings[0].startTime);
+}
+};
 
 calendar.appendChild(dayDiv);
 }
 }
 
-function changeMonth(offset) {
-currentDate.setMonth(currentDate.getMonth() + offset);
+function changeMonth(direction) {
+currentDate.setMonth(currentDate.getMonth() + direction);
 renderCalendar();
 }
 </script>
 </body>
-</html>
 </html>
