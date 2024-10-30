@@ -352,46 +352,62 @@
         renderCalendar();
     }
 
-    // Function to render calendar
     function renderCalendar() {
-        const calendar = document.getElementById('calendar');
-        calendar.innerHTML = '';
-        const monthDays = new Date(currentYear, currentMonth + 1, 0).getDate(); // Last day of the month
+    const calendar = document.getElementById('calendar');
+    calendar.innerHTML = '';
+    const monthDays = new Date(currentYear, currentMonth + 1, 0).getDate(); // Last day of the month
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay(); // First day of the month (0-6)
+    
+    // Create header for day names
+    const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    const dayHeader = document.createElement('div');
+    dayHeader.className = 'day-header'; // Add a class for styling
+    dayNames.forEach(day => {
+        const dayNameElement = document.createElement('div');
+        dayNameElement.className = 'day-name';
+        dayNameElement.innerText = day;
+        dayHeader.appendChild(dayNameElement);
+    });
+    calendar.appendChild(dayHeader);
 
-        // Create header for day names
-        const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-        const dayHeader = document.createElement('div');
-        dayNames.forEach(day => {
-            const dayNameElement = document.createElement('div');
-            dayNameElement.className = 'day-name';
-            dayNameElement.innerText = day;
-            dayHeader.appendChild(dayNameElement);
-        });
-        calendar.appendChild(dayHeader);
+    // Create a new row for the days of the month
+    const daysRow = document.createElement('div');
+    daysRow.className = 'days-row'; // Add a class for styling
 
-        // Display the calendar
-        for (let i = 1; i <= monthDays; i++) {
-            const dayElement = document.createElement('div');
-            dayElement.className = 'day';
-            dayElement.innerText = i;
-
-            const date = new Date(currentYear, currentMonth, i);
-            bookings.forEach(booking => {
-                if (booking.date === date.toISOString().split('T')[0]) {
-                    const bookingDiv = document.createElement('div');
-                    bookingDiv.className = 'booking';
-                    bookingDiv.style.backgroundColor = booking.color;
-                    bookingDiv.innerText = `${booking.start} - ${booking.end}\n${booking.comment}`;
-                    dayElement.appendChild(bookingDiv);
-                }
-            });
-
-            calendar.appendChild(dayElement);
-        }
-
-        // Update month display
-        document.getElementById('currentMonth').innerText = `${currentDate.toLocaleString('default', { month: 'long' })} ${currentYear}`;
+    // Fill in empty spaces for days before the first of the month
+    for (let i = 0; i < firstDayOfMonth; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'day empty'; // Optional: style for empty cells
+        daysRow.appendChild(emptyCell);
     }
+
+    // Display the calendar
+    for (let i = 1; i <= monthDays; i++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'day';
+        dayElement.innerText = i;
+
+        const date = new Date(currentYear, currentMonth, i);
+        bookings.forEach(booking => {
+            if (booking.date === date.toISOString().split('T')[0]) {
+                const bookingDiv = document.createElement('div');
+                bookingDiv.className = 'booking';
+                bookingDiv.style.backgroundColor = booking.color;
+                bookingDiv.innerText = `${booking.start} - ${booking.end}\n${booking.comment}`;
+                dayElement.appendChild(bookingDiv);
+            }
+        });
+
+        daysRow.appendChild(dayElement);
+    }
+
+    // Append the row of days to the calendar
+    calendar.appendChild(daysRow);
+
+    // Update month display
+    document.getElementById('currentMonth').innerText = `${currentDate.toLocaleString('default', { month: 'long' })} ${currentYear}`;
+}
+
 
     // Function to clear all bookings
     function clearAllBookings() {
