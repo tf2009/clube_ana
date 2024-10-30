@@ -112,6 +112,7 @@ th, td {
     width: 100%; /* Full width for weeks */
 }
 
+/* Each day should display without excessive height */
 .day {
     border: 1px solid #ddd;
     padding: 10px;
