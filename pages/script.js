@@ -229,12 +229,13 @@ function renderCalendar() {
 function clearBookingsForMonth() {
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
-    
+
     // Create an array to hold keys of dates to delete
     const keysToDelete = [];
-    
+
     // Check each booking date
     for (const dateKey in bookings) {
+        // Parse the dateKey into a Date object
         const date = new Date(dateKey);
         
         // Only add to keysToDelete if the booking is in the current month and year
@@ -248,6 +249,7 @@ function clearBookingsForMonth() {
 
     renderCalendar(); // Refresh the calendar to reflect the changes
 }
+
 
 // Event listener for the clear bookings button
 document.getElementById('clearBookingsButton').onclick = clearBookingsForMonth;
