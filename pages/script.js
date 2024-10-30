@@ -136,6 +136,11 @@ function renderCalendar() {
     daysOfWeek.forEach(day => {
         const dayCell = document.createElement('div');
         dayCell.classList.add('day-name');
+        if (day.isSaturday) {
+            dayCell.classList.add('saturday');
+        } else if (day.isSunday) {
+            dayCell.classList.add('sunday');
+        }
         dayCell.innerText = day;
         dayHeader.appendChild(dayCell);
     });
