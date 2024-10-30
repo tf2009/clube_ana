@@ -4,8 +4,15 @@ const monthNames = [
 ];
 
 let currentDate = new Date();
-const bookings = {}; // Use an object to store bookings by date
-let athletes = [];
+//const bookings = {}; // Use an object to store bookings by date
+//let athletes = [];
+// Define unique keys for each sport
+const athletesKey = 'athletes_futsal'; // Change this key for judo.html
+const bookingsKey = 'bookings_futsal'; // Change this key for judo.html
+
+let athletes = JSON.parse(localStorage.getItem(athletesKey)) || [];
+let bookings = JSON.parse(localStorage.getItem(bookingsKey)) || [];
+
 
 // Define colors for each escalão
 const escalãoColors = {
@@ -15,6 +22,9 @@ const escalãoColors = {
     "juniores": "#f9cb9c",
     "Seniores": "#e6a9e3"
 };
+
+
+// ... rest of your JavaScript code ...
 
 // Load athletes from local storage when the page loads
 window.onload = function() {

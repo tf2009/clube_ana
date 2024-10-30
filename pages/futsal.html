@@ -240,11 +240,19 @@
 </div>
 
 <script>
-    let athletes = JSON.parse(localStorage.getItem('athletes')) || [];
-    let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+    //let athletes = JSON.parse(localStorage.getItem('athletes')) || [];
+    //let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
     let currentDate = new Date();
     let currentMonth = currentDate.getMonth();
     let currentYear = currentDate.getFullYear();
+
+    const athletesKey = 'athletes_futsal';
+    const bookingsKey = 'bookings_futsal';
+
+    let athletes = JSON.parse(localStorage.getItem(athletesKey)) || [];
+    let bookings = JSON.parse(localStorage.getItem(bookingsKey)) || [];
+
+
 
     function toggleDropdown(id) {
         const dropdown = document.getElementById(id);
