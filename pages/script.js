@@ -233,34 +233,19 @@ function clearBookingsForMonth() {
     // Create an array to hold keys of dates to delete
     const keysToDelete = [];
 
-    // Check each booking date
-    for (const dateKey in bookings) {
-        // Parse the dateKey into a Date object
-        const date = new Date(dateKey);
-        
-        // Only add to keysToDelete if the booking is in the current month and year
-        if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+    for (let day = 1; day <= 31; day++) {
+        const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        if (bookings[dateKey]) {
             keysToDelete.push(dateKey);
         }
     }
 
-    // Delete the bookings for those keys
-    keysToDelete.forEach(key => delete bookings[key]);
-
-    renderCalendar(); // Refresh the calendar to reflect the changes
+    keysToDelete.forEach(key => delete bookings[key]); // Delete all bookings for this month
+    renderCalendar(); // Refresh the calendar
 }
 
-
-// Event listener for the clear bookings button
-document.getElementById('clearBookingsButton').onclick = clearBookingsForMonth;
-
-// Navigation functions
-function goToPreviousMonth() {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar();
-}
-
-function goToNextMonth() {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar();
+// Date navigation
+function navigateMonth(direction) {
+    currentDate.setMonth(currentDate.getMonth() + direction);
+    renderCalendar(); // Re-render the calendar for the new month
 }
