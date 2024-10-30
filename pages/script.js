@@ -1,158 +1,134 @@
-const monthNames = [
-    "January", "February", "March", "April", "May", "June", 
-    "July", "August", "September", "October", "November", "December"
-];
-
 let currentDate = new Date();
-// Define unique keys for each sport
-const athletesKey = 'athletes_futsal'; // Change this key for judo.html
-const bookingsKey = 'bookings_futsal'; // Change this key for judo.html
+let currentMonth = currentDate.getMonth();
+let currentYear = currentDate.getFullYear();
+
+const athletesKey = 'athletes_judo';
+const bookingsKey = 'bookings_judo';
 
 let athletes = JSON.parse(localStorage.getItem(athletesKey)) || [];
 let bookings = JSON.parse(localStorage.getItem(bookingsKey)) || [];
 
-// Define colors for each escalão
-const escalãoColors = {
-    "Infantis": "#d1e7dd",
-    "iniciados": "#fff3cd",
-    "Juvenis": "#cfe2ff",
-    "juniores": "#f9cb9c",
-    "Seniores": "#e6a9e3"
-};
+document.addEventListener('DOMContentLoaded', () => {
+    renderAthleteList();
+    renderCalendar();
+    updateCurrentMonth();
+});
 
-// Load athletes from local storage when the page loads
-window.onload = function() {
-    loadAthletes(); // Load athletes from localStorage
-    renderCalendar(); // Render the calendar on page load
-};
+// Toggle dropdown visibility
+function toggleDropdown(dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
 
-// Load athletes from local storage
-function loadAthletes() {
-    const storedAthletes = localStorage.getItem('athletes');
-    if (storedAthletes) {
-        athletes = JSON.parse(storedAthletes);
+// Add athlete to the list
+function addAthlete() {
+    const name = document.getElementById('athleteName').value;
+    const parents = document.getElementById('athleteParents').value;
+    const contact = document.getElementById('athleteContact').value;
+    const escalão = document.getElementById('athleteEscalao').value;
+    const comments = document.getElementById('athleteComments').value;
+
+    if (!name || !parents || !contact || !escalão) {
+        alert('Por favor, preencha todos os campos obrigatórios.');
+        return;
     }
-    renderAthleteLists(); // Render athlete lists after loading
+
+    const athlete = { name, parents, contact, escalão, comments };
+    athletes.push(athlete);
+    localStorage.setItem(athletesKey, JSON.stringify(athletes));
+
+    document.getElementById('athleteName').value = '';
+    document.getElementById('athleteParents').value = '';
+    document.getElementById('athleteContact').value = '';
+    document.getElementById('athleteEscalao').value = '';
+    document.getElementById('athleteComments').value = '';
+
+    renderAthleteList();
 }
 
-function saveAthletes() {
-    localStorage.setItem('athletes', JSON.stringify(athletes));
-}
+// Render the list of athletes
+function renderAthleteList() {
+    const athleteTablesContainer = document.getElementById('athleteTables');
+    athleteTablesContainer.innerHTML = '';
 
-function renderAthleteLists() {
-    const athleteListContainer = document.getElementById('athleteListContainer');
-    athleteListContainer.innerHTML = '';
-
-    const groupedAthletes = athletes.reduce((acc, athlete) => {
-        if (!acc[athlete.escalao]) {
-            acc[athlete.escalao] = [];
-        }
-        acc[athlete.escalao].push(athlete);
-        return acc;
-    }, {});
-
-    for (const [escalão, athleteGroup] of Object.entries(groupedAthletes)) {
+    const escalões = [...new Set(athletes.map(athlete => athlete.escalão))];
+    
+    escalões.forEach(escalão => {
+        const filteredAthletes = athletes.filter(athlete => athlete.escalão === escalão);
         const table = document.createElement('table');
-        
-        // Create a header row with a dropdown for each escalão
         const headerRow = document.createElement('tr');
-        headerRow.innerHTML = `
-            <th colspan="5">
-                <span class="dropdown" onclick="toggleDropdown('${escalão}')">
-                    ${escalão} <span class="arrow">▼</span>
-                </span>
-            </th>`;
+        headerRow.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Remover</th>`;
         table.appendChild(headerRow);
-        
-        // Create a tbody for athletes
-        const athleteTableBody = document.createElement('tbody');
-        athleteTableBody.id = `athleteGroup-${escalão}`;
-        athleteTableBody.style.display = 'none'; // Start hidden
 
-        athleteGroup.forEach((athlete, index) => {
+        filteredAthletes.forEach((athlete, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${athlete.nome}</td>
-                <td>${athlete.pais}</td>
-                <td>${athlete.contacto}</td>
-                <td>${athlete.comentarios}</td>
-                <td><span class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</span></td>
+                <td>${athlete.name}</td>
+                <td>${athlete.parents}</td>
+                <td>${athlete.contact}</td>
+                <td>${athlete.escalão}</td>
+                <td>${athlete.comments}</td>
+                <td class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</td>
             `;
-            athleteTableBody.appendChild(row);
+            table.appendChild(row);
         });
 
-        table.appendChild(athleteTableBody);
-        athleteListContainer.appendChild(table);
-    }
+        const escalãoHeader = document.createElement('div');
+        escalãoHeader.classList.add('escalão-header');
+        escalãoHeader.innerText = escalão;
+        athleteTablesContainer.appendChild(escalãoHeader);
+        athleteTablesContainer.appendChild(table);
+    });
 }
 
-// Toggle dropdown visibility for each escalão
-function toggleDropdown(escalão) {
-    const athleteGroup = document.getElementById(`athleteGroup-${escalão}`);
-    athleteGroup.style.display = athleteGroup.style.display === 'none' ? 'table-row-group' : 'none';
-}
-
+// Remove athlete from the list
 function removeAthlete(index, escalão) {
-    athletes = athletes.filter((athlete, i) => i !== index);
-    saveAthletes();
-    renderAthleteLists(); // Re-render the athlete lists after removing an athlete
+    athletes = athletes.filter((_, i) => i !== index);
+    localStorage.setItem(athletesKey, JSON.stringify(athletes));
+    renderAthleteList();
 }
 
-// Function to add a booking
+// Add booking to the calendar
 function addBooking() {
-    const dateInput = document.getElementById("bookingDate").value;
-    const start = document.getElementById("bookingStartTime").value;
-    const end = document.getElementById("bookingEndTime").value;
-    const athleteEscalão = document.getElementById("athleteEscalao").value; // Select escalão for the booking
-    const color = escalãoColors[athleteEscalão] || "#ffffff"; // Default to white if not found
-    const comment = document.getElementById("bookingComment").value;
+    const bookingDate = document.getElementById('bookingDate').value;
+    const startTime = document.getElementById('bookingStartTime').value;
+    const endTime = document.getElementById('bookingEndTime').value;
+    const bookingColor = document.getElementById('bookingColor').value;
+    const bookingComment = document.getElementById('bookingComment').value;
 
-    if (dateInput && start && end) {
-        const bookingDate = new Date(dateInput + 'T00:00:00');
-        const dateKey = bookingDate.toISOString().split('T')[0]; // Use ISO string for consistent format
-
-        // Initialize the bookings array for the date if it doesn't exist
-        if (!bookings[dateKey]) {
-            bookings[dateKey] = [];
-        }
-
-        // Push new booking
-        bookings[dateKey].push({ 
-            start, 
-            end, 
-            color, 
-            comment 
-        });
-        renderCalendar(); // Refresh the calendar to show the new booking
-
-        // Clear the input fields
-        document.getElementById("bookingDate").value = "";
-        document.getElementById("bookingStartTime").value = "";
-        document.getElementById("bookingEndTime").value = "";
-        document.getElementById("bookingComment").value = "";
-    } else {
-        alert("Please fill in all required fields.");
+    if (!bookingDate || !startTime || !endTime) {
+        alert('Por favor, preencha todos os campos obrigatórios.');
+        return;
     }
+
+    const booking = { date: bookingDate, start: startTime, end: endTime, color: bookingColor, comment: bookingComment };
+    bookings.push(booking);
+    localStorage.setItem(bookingsKey, JSON.stringify(bookings));
+
+    document.getElementById('bookingDate').value = '';
+    document.getElementById('bookingStartTime').value = '';
+    document.getElementById('bookingEndTime').value = '';
+    document.getElementById('bookingComment').value = '';
+
+    renderCalendar();
 }
 
-// Function to remove a booking by clicking on it
-function removeBooking(dateKey, index) {
-    if (bookings[dateKey]) {
-        bookings[dateKey].splice(index, 1); // Remove the booking at the given index
-        if (bookings[dateKey].length === 0) {
-            delete bookings[dateKey]; // Delete the date key if no bookings remain
-        }
-        renderCalendar(); // Refresh the calendar to reflect the removal
-    }
+// Clear all bookings
+function clearAllBookings() {
+    bookings = [];
+    localStorage.setItem(bookingsKey, JSON.stringify(bookings));
+    renderCalendar();
 }
 
-// Function to render the calendar
+// Render the calendar
 function renderCalendar() {
-    const calendarElement = document.getElementById('calendar');
-    calendarElement.innerHTML = ''; // Clear the calendar
+    const calendarContainer = document.getElementById('calendar');
+    calendarContainer.innerHTML = '';
 
-    const monthDays = new Date(currentYear, currentMonth + 1, 0).getDate(); // Total days in the month
-    const firstDay = new Date(currentYear, currentMonth, 1).getDay(); // First day of the month
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+    const totalDays = lastDayOfMonth.getDate();
+    
     const dayHeader = document.createElement('div');
     dayHeader.classList.add('day-header');
 
@@ -163,62 +139,106 @@ function renderCalendar() {
         dayCell.innerText = day;
         dayHeader.appendChild(dayCell);
     });
-
-    calendarElement.appendChild(dayHeader);
-
-    // Create a grid for the calendar days
-    const calendarGrid = document.createElement('div');
-    calendarGrid.classList.add('calendar-grid');
-
-    // Add empty cells for the days before the first day of the month
-    for (let i = 0; i < firstDay; i++) {
+    
+    calendarContainer.appendChild(dayHeader);
+    
+    // Empty cells before the first day of the month
+    for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
         const emptyCell = document.createElement('div');
         emptyCell.classList.add('day');
-        calendarGrid.appendChild(emptyCell);
+        calendarContainer.appendChild(emptyCell);
     }
 
-    // Add the actual days of the month
-    for (let day = 1; day <= monthDays; day++) {
+    // Create calendar days
+    for (let day = 1; day <= totalDays; day++) {
         const dayCell = document.createElement('div');
         dayCell.classList.add('day');
         dayCell.innerText = day;
-        dayCell.setAttribute('data-date', `${currentYear}-${currentMonth + 1}-${day}`); // Set date for booking
 
-        // Add light pink background for Saturdays and Sundays
-        const date = new Date(currentYear, currentMonth, day);
-        if (date.getDay() === 0 || date.getDay() === 6) { // Sunday or Saturday
-            dayCell.style.backgroundColor = '#ffcccc'; // Light pink color
-        }
+        const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayBookings = bookings.filter(booking => booking.date === dateString);
 
-        // Add bookings to the cell
-        const dayBookings = bookings.filter(b => b.date === `${currentYear}-${currentMonth + 1}-${day}`);
-        dayBookings.forEach(b => {
-            const bookingElement = document.createElement('div');
-            bookingElement.classList.add('booking');
-            bookingElement.style.backgroundColor = b.color;
-            bookingElement.innerText = `${b.startTime} - ${b.endTime}\n${b.comment}`;
-            dayCell.appendChild(bookingElement);
+        dayBookings.forEach(booking => {
+            const bookingDiv = document.createElement('div');
+            bookingDiv.classList.add('booking');
+            bookingDiv.style.backgroundColor = booking.color;
+            bookingDiv.innerText = `${booking.start} - ${booking.end} ${booking.comment ? `(${booking.comment})` : ''}`;
+            bookingDiv.onclick = function() {
+                removeBooking(dateString, booking.start);
+            };
+            dayCell.appendChild(bookingDiv);
         });
 
-        dayCell.onclick = function () {
-            alert(`Date: ${dayCell.getAttribute('data-date')}\nBookings:\n${dayBookings.map(b => `${b.startTime} - ${b.endTime}: ${b.comment}`).join('\n')}`);
-        };
+        calendarContainer.appendChild(dayCell);
+    }
+}
 
-        calendarGrid.appendChild(dayCell);
+// Remove booking
+function removeBooking(date, startTime) {
+    bookings = bookings.filter(booking => !(booking.date === date && booking.start === startTime));
+    localStorage.setItem(bookingsKey, JSON.stringify(bookings));
+    renderCalendar();
+}
+
+// Change month in the calendar
+function changeMonth(direction) {
+    currentMonth += direction;
+
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+    } else if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
     }
 
-    calendarElement.appendChild(calendarGrid);
-    document.getElementById('currentMonth').innerText = `${currentDate.toLocaleString('default', { month: 'long' })} ${currentYear}`;
+    renderCalendar();
+    updateCurrentMonth();
 }
 
-// Function to navigate to the previous month
-function previousMonth() {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar();
+// Update current month header
+function updateCurrentMonth() {
+    const monthNames = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+    document.getElementById('currentMonth').innerText = `${monthNames[currentMonth]} ${currentYear}`;
 }
 
-// Function to navigate to the next month
-function nextMonth() {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar();
+// Search for athletes
+function searchAthlete() {
+    const query = document.getElementById('searchAthlete').value.toLowerCase();
+    const athleteTablesContainer = document.getElementById('athleteTables');
+    athleteTablesContainer.innerHTML = '';
+
+    const escalões = [...new Set(athletes.map(athlete => athlete.escalão))];
+
+    escalões.forEach(escalão => {
+        const filteredAthletes = athletes.filter(athlete => athlete.escalão === escalão && athlete.name.toLowerCase().includes(query));
+        if (filteredAthletes.length > 0) {
+            const table = document.createElement('table');
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Remover</th>`;
+            table.appendChild(headerRow);
+
+            filteredAthletes.forEach((athlete, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${athlete.name}</td>
+                    <td>${athlete.parents}</td>
+                    <td>${athlete.contact}</td>
+                    <td>${athlete.escalão}</td>
+                    <td>${athlete.comments}</td>
+                    <td class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</td>
+                `;
+                table.appendChild(row);
+            });
+
+            const escalãoHeader = document.createElement('div');
+            escalãoHeader.classList.add('escalão-header');
+            escalãoHeader.innerText = escalão;
+            athleteTablesContainer.appendChild(escalãoHeader);
+            athleteTablesContainer.appendChild(table);
+        }
+    });
 }
