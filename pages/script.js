@@ -230,26 +230,27 @@ function clearBookingsForMonth() {
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
     
-    // Filter out any bookings that are not in the current month and year
-    for (let dateKey in bookings) {
-        const [year, month] = dateKey.split('-').map(Number);
-        
-        if (year === currentYear && month - 1 === currentMonth) {
-            delete bookings[dateKey]; // Clear the bookings for this date
+    // Filter out any bookings that are not in the current month
+    for (const dateKey in bookings) {
+        const date = new Date(dateKey);
+        if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+            delete bookings[dateKey]; // Delete bookings for that date
         }
     }
-    renderCalendar(); // Refresh the calendar to show the cleared month
+
+    renderCalendar(); // Refresh the calendar to reflect the changes
 }
 
-// Change to the previous month
-function prevMonth() {
+// Event listener for the clear bookings button
+document.getElementById('clearBookingsButton').onclick = clearBookingsForMonth;
+
+// Navigation functions
+function goToPreviousMonth() {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();
 }
 
-// Change to the next month
-function nextMonth() {
+function goToNextMonth() {
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar();
 }
-
