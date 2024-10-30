@@ -230,13 +230,21 @@ function clearBookingsForMonth() {
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
     
-    // Filter out any bookings that are not in the current month
+    // Create an array to hold keys of dates to delete
+    const keysToDelete = [];
+    
+    // Check each booking date
     for (const dateKey in bookings) {
         const date = new Date(dateKey);
+        
+        // Only add to keysToDelete if the booking is in the current month and year
         if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
-            delete bookings[dateKey]; // Delete bookings for that date
+            keysToDelete.push(dateKey);
         }
     }
+
+    // Delete the bookings for those keys
+    keysToDelete.forEach(key => delete bookings[key]);
 
     renderCalendar(); // Refresh the calendar to reflect the changes
 }
