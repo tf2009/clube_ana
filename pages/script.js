@@ -22,12 +22,13 @@ function toggleDropdown(dropdownId) {
 
 // Add athlete to the list
 function addAthlete() {
-    const name = document.getElementById('athleteName').value;
-    const parents = document.getElementById('athleteParents').value;
-    const contact = document.getElementById('athleteContact').value;
-    const escalão = document.getElementById('athleteEscalao').value;
-    const comments = document.getElementById('athleteComments').value;
+    const name = document.getElementById('athleteName').value.trim();
+    const parents = document.getElementById('athleteParents').value.trim();
+    const contact = document.getElementById('athleteContact').value.trim();
+    const escalão = document.getElementById('athleteEscalao').value.trim();
+    const comments = document.getElementById('athleteComments').value.trim();
 
+    // Validate input fields
     if (!name || !parents || !contact || !escalão) {
         alert('Por favor, preencha todos os campos obrigatórios.');
         return;
@@ -37,6 +38,7 @@ function addAthlete() {
     athletes.push(athlete);
     localStorage.setItem(athletesKey, JSON.stringify(athletes));
 
+    // Clear input fields
     document.getElementById('athleteName').value = '';
     document.getElementById('athleteParents').value = '';
     document.getElementById('athleteContact').value = '';
@@ -55,35 +57,37 @@ function renderAthleteList() {
     
     escalões.forEach(escalão => {
         const filteredAthletes = athletes.filter(athlete => athlete.escalão === escalão);
-        const table = document.createElement('table');
-        const headerRow = document.createElement('tr');
-        headerRow.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Remover</th>`;
-        table.appendChild(headerRow);
+        if (filteredAthletes.length > 0) { // Only create table if there are athletes
+            const table = document.createElement('table');
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = `<th>Nome</th><th>Pais</th><th>Contacto</th><th>Escalão</th><th>Comentários</th><th>Remover</th>`;
+            table.appendChild(headerRow);
 
-        filteredAthletes.forEach((athlete, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${athlete.name}</td>
-                <td>${athlete.parents}</td>
-                <td>${athlete.contact}</td>
-                <td>${athlete.escalão}</td>
-                <td>${athlete.comments}</td>
-                <td class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</td>
-            `;
-            table.appendChild(row);
-        });
+            filteredAthletes.forEach((athlete, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${athlete.name}</td>
+                    <td>${athlete.parents}</td>
+                    <td>${athlete.contact}</td>
+                    <td>${athlete.escalão}</td>
+                    <td>${athlete.comments}</td>
+                    <td class="remove-athlete" onclick="removeAthlete(${index})">Remover</td>
+                `;
+                table.appendChild(row);
+            });
 
-        const escalãoHeader = document.createElement('div');
-        escalãoHeader.classList.add('escalão-header');
-        escalãoHeader.innerText = escalão;
-        athleteTablesContainer.appendChild(escalãoHeader);
-        athleteTablesContainer.appendChild(table);
+            const escalãoHeader = document.createElement('div');
+            escalãoHeader.classList.add('escalão-header');
+            escalãoHeader.innerText = escalão;
+            athleteTablesContainer.appendChild(escalãoHeader);
+            athleteTablesContainer.appendChild(table);
+        }
     });
 }
 
 // Remove athlete from the list
-function removeAthlete(index, escalão) {
-    athletes = athletes.filter((_, i) => i !== index);
+function removeAthlete(index) {
+    athletes.splice(index, 1);
     localStorage.setItem(athletesKey, JSON.stringify(athletes));
     renderAthleteList();
 }
@@ -229,7 +233,7 @@ function searchAthlete() {
                     <td>${athlete.contact}</td>
                     <td>${athlete.escalão}</td>
                     <td>${athlete.comments}</td>
-                    <td class="remove-athlete" onclick="removeAthlete(${index}, '${escalão}')">Remover</td>
+                    <td class="remove-athlete" onclick="removeAthlete(${index})">Remover</td>
                 `;
                 table.appendChild(row);
             });
