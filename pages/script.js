@@ -128,57 +128,48 @@ function renderCalendar() {
     const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
     const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
     const totalDays = lastDayOfMonth.getDate();
-
-    // Create the day header
+    
     const dayHeader = document.createElement('div');
     dayHeader.classList.add('day-header');
 
     const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    daysOfWeek.forEach((day, index) => {
+    daysOfWeek.forEach(day => {
         const dayCell = document.createElement('div');
         dayCell.classList.add('day-name');
-
-        // Apply weekend classes
-        if (index === 0) {
-            dayCell.classList.add('sunday'); // Index 0 corresponds to Sunday
-        } else if (index === 6) {
-            dayCell.classList.add('saturday'); // Index 6 corresponds to Saturday
-        }
-
         dayCell.innerText = day;
         dayHeader.appendChild(dayCell);
     });
-
+    
     calendarContainer.appendChild(dayHeader);
-
-    // Create the days of the month
-    const week = document.createElement('div');
-    week.classList.add('week');
-    for (let day = 1; day <= totalDays; day++) {
-        const currentDay = new Date(currentYear, currentMonth, day);
-        const dayDiv = document.createElement('div');
-        dayDiv.classList.add('day');
-
-        // Check if the day is Saturday or Sunday to apply the respective classes
-        if (currentDay.getDay() === 0) { // Sunday
-            dayDiv.classList.add('sunday');
-        } else if (currentDay.getDay() === 6) { // Saturday
-            dayDiv.classList.add('saturday');
-        }
-
-        dayDiv.innerText = day; // Set the day number
-        week.appendChild(dayDiv);
-
-        // Check if we need to start a new week
-        if (currentDay.getDay() === 6) {
-            calendarContainer.appendChild(week);
-            week = document.createElement('div'); // Create a new week
-            week.classList.add('week');
-        }
+    
+    // Empty cells before the first day of the month
+    for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.classList.add('day');
+        calendarContainer.appendChild(emptyCell);
     }
-    // Append the last week if it has days
-    if (week.children.length > 0) {
-        calendarContainer.appendChild(week);
+
+    // Create calendar days
+    for (let day = 1; day <= totalDays; day++) {
+        const dayCell = document.createElement('div');
+        dayCell.classList.add('day');
+        dayCell.innerText = day;
+
+        const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayBookings = bookings.filter(booking => booking.date === dateString);
+
+        dayBookings.forEach(booking => {
+            const bookingDiv = document.createElement('div');
+            bookingDiv.classList.add('booking');
+            bookingDiv.style.backgroundColor = booking.color;
+            bookingDiv.innerText = `${booking.start} - ${booking.end} ${booking.comment ? `(${booking.comment})` : ''}`;
+            bookingDiv.onclick = function() {
+                removeBooking(dateString, booking.start);
+            };
+            dayCell.appendChild(bookingDiv);
+        });
+
+        calendarContainer.appendChild(dayCell);
     }
 }
 

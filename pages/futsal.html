@@ -248,166 +248,111 @@
 
     function toggleDropdown(id) {
         const dropdown = document.getElementById(id);
-        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
+
+    function searchAthlete() {
+        const query = document.getElementById('searchAthlete').value.toLowerCase();
+        const athleteTables = document.getElementById('athleteTables');
+        athleteTables.innerHTML = '';
+        const filteredAthletes = athletes.filter(a => a.nome.toLowerCase().includes(query));
+
+        filteredAthletes.forEach(athlete => {
+            athleteTables.innerHTML += `
+                <div>${athlete.nome} - ${athlete.pais} 
+                <span class="remove-athlete" onclick="removeAthlete('${athlete.nome}')">[Remover]</span></div>`;
+        });
     }
 
     function addAthlete() {
-        const name = document.getElementById('athleteName').value.trim();
-        const parents = document.getElementById('athleteParents').value.trim();
-        const contact = document.getElementById('athleteContact').value.trim();
-        const escalão = document.getElementById('athleteEscalao').value.trim();
-        const comments = document.getElementById('athleteComments').value.trim();
+        const name = document.getElementById('athleteName').value;
+        const pais = document.getElementById('athleteParents').value;
+        const contacto = document.getElementById('athleteContact').value;
+        const escalão = document.getElementById('athleteEscalao').value;
+        const comentarios = document.getElementById('athleteComments').value;
 
-        if (name && parents && contact && escalão) {
-            const athlete = { name, parents, contact, escalão, comments };
-            athletes.push(athlete);
+        if (name && pais && contacto && escalão) {
+            const newAthlete = { nome: name, pais: pais, contacto: contacto, escalão: escalão, comentarios: comentarios };
+            athletes.push(newAthlete);
             localStorage.setItem('athletes', JSON.stringify(athletes));
-            displayAthletes(); // Update the athlete list
-            clearAthleteForm();
+            document.getElementById('athleteName').value = '';
+            document.getElementById('athleteParents').value = '';
+            document.getElementById('athleteContact').value = '';
+            document.getElementById('athleteEscalao').value = '';
+            document.getElementById('athleteComments').value = '';
+            searchAthlete(); // Update athlete list
         } else {
             alert('Por favor, preencha todos os campos obrigatórios.');
         }
     }
 
-    function clearAthleteForm() {
-        document.getElementById('athleteName').value = '';
-        document.getElementById('athleteParents').value = '';
-        document.getElementById('athleteContact').value = '';
-        document.getElementById('athleteEscalao').value = '';
-        document.getElementById('athleteComments').value = '';
-    }
-
-    function displayAthletes() {
-        const athleteTablesContainer = document.getElementById('athleteTables');
-        athleteTablesContainer.innerHTML = ''; // Clear existing tables
-
-        const groupedAthletes = athletes.reduce((acc, athlete) => {
-            acc[athlete.escalão] = acc[athlete.escalão] || [];
-            acc[athlete.escalão].push(athlete);
-            return acc;
-        }, {});
-
-        for (const escalão in groupedAthletes) {
-            const athletesList = groupedAthletes[escalão];
-            let tableHTML = `<div class="escalão-header">${escalão}</div><table><thead><tr><th>Nome</th><th>Pais</th><th>Contacto</th><th>Comentários</th><th>Remover</th></tr></thead><tbody>`;
-            athletesList.forEach((athlete, index) => {
-                tableHTML += `<tr><td>${athlete.name}</td><td>${athlete.parents}</td><td>${athlete.contact}</td><td>${athlete.comments}</td><td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td></tr>`;
-            });
-            tableHTML += `</tbody></table>`;
-            athleteTablesContainer.innerHTML += tableHTML;
-        }
-    }
-
-    function removeAthlete(index) {
-        athletes.splice(index, 1);
+    function removeAthlete(name) {
+        athletes = athletes.filter(athlete => athlete.nome !== name);
         localStorage.setItem('athletes', JSON.stringify(athletes));
-        displayAthletes();
-    }
-
-    function searchAthlete() {
-        const query = document.getElementById('searchAthlete').value.toLowerCase();
-        const filteredAthletes = athletes.filter(athlete => athlete.name.toLowerCase().includes(query));
-        displayFilteredAthletes(filteredAthletes);
-    }
-
-    function displayFilteredAthletes(filteredAthletes) {
-        const athleteTablesContainer = document.getElementById('athleteTables');
-        athleteTablesContainer.innerHTML = '';
-
-        const groupedAthletes = filteredAthletes.reduce((acc, athlete) => {
-            acc[athlete.escalão] = acc[athlete.escalão] || [];
-            acc[athlete.escalão].push(athlete);
-            return acc;
-        }, {});
-
-        for (const escalão in groupedAthletes) {
-            const athletesList = groupedAthletes[escalão];
-            let tableHTML = `<div class="escalão-header">${escalão}</div><table><thead><tr><th>Nome</th><th>Pais</th><th>Contacto</th><th>Comentários</th><th>Remover</th></tr></thead><tbody>`;
-            athletesList.forEach((athlete, index) => {
-                tableHTML += `<tr><td>${athlete.name}</td><td>${athlete.parents}</td><td>${athlete.contact}</td><td>${athlete.comments}</td><td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td></tr>`;
-            });
-            tableHTML += `</tbody></table>`;
-            athleteTablesContainer.innerHTML += tableHTML;
-        }
+        searchAthlete(); // Update athlete list
     }
 
     function addBooking() {
-        const bookingDate = document.getElementById('bookingDate').value;
+        const date = document.getElementById('bookingDate').value;
         const startTime = document.getElementById('bookingStartTime').value;
         const endTime = document.getElementById('bookingEndTime').value;
         const color = document.getElementById('bookingColor').value;
         const comment = document.getElementById('bookingComment').value;
 
-        if (bookingDate && startTime && endTime) {
-            const booking = { bookingDate, startTime, endTime, color, comment };
+        if (date && startTime && endTime) {
+            const booking = { date, startTime, endTime, color, comment };
             bookings.push(booking);
             localStorage.setItem('bookings', JSON.stringify(bookings));
-            renderCalendar();
-            clearBookingForm();
+            renderCalendar(); // Refresh calendar display
         } else {
             alert('Por favor, preencha todos os campos obrigatórios.');
         }
     }
 
-    function clearBookingForm() {
-        document.getElementById('bookingDate').value = '';
-        document.getElementById('bookingStartTime').value = '';
-        document.getElementById('bookingEndTime').value = '';
-        document.getElementById('bookingComment').value = '';
-    }
-
     function clearAllBookings() {
         bookings = [];
         localStorage.setItem('bookings', JSON.stringify(bookings));
-        renderCalendar();
+        renderCalendar(); // Refresh calendar display
     }
 
     function renderCalendar() {
-    const calendar = document.getElementById('calendar');
-    calendar.innerHTML = ''; // Clear previous calendar
+        const calendar = document.getElementById('calendar');
+        calendar.innerHTML = '';
+        const monthDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
 
-    // Create the weekday header row
-    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const headerRow = document.createElement('div');
-    headerRow.classList.add('weekday-header'); // Add a class for styling
+        for (let i = 0; i < firstDay; i++) {
+            calendar.innerHTML += '<div class="day"></div>'; // Empty days before the first day of the month
+        }
 
-    weekdays.forEach(day => {
-        const dayHeader = document.createElement('div');
-        dayHeader.classList.add('day-header');
-        dayHeader.innerText = day;
-        headerRow.appendChild(dayHeader);
-    });
-    calendar.appendChild(headerRow);
+        for (let day = 1; day <= monthDays; day++) {
+            const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const dayBookings = bookings.filter(b => b.date === dateString);
 
-    const monthDays = getDaysInMonth(currentYear, currentMonth);
-    document.getElementById('currentMonth').innerText = `${currentDate.toLocaleString('default', { month: 'long' })} ${currentYear}`;
-    
-    // Create empty slots for the first day of the month
-    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-    for (let i = 0; i < firstDay; i++) {
-        const emptyDiv = document.createElement('div');
-        emptyDiv.classList.add('day'); // Apply styling as needed
-        calendar.appendChild(emptyDiv);
-    }
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'day';
+            dayDiv.innerHTML = `<div class="day-name">${day}</div>`;
 
-    for (let i = 0; i < monthDays; i++) {
-        const day = document.createElement('div');
-        day.classList.add('day');
-        day.innerText = i + 1;
-
-        // Check for bookings and display them
-        bookings.forEach(booking => {
-            if (booking.date === `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${(i + 1).toString().padStart(2, '0')}`) {
+            dayBookings.forEach(b => {
                 const bookingDiv = document.createElement('div');
                 bookingDiv.className = 'booking';
-                bookingDiv.style.backgroundColor = booking.color;
-                bookingDiv.innerText = `${booking.startTime} - ${booking.endTime} ${booking.comment}`;
-                day.appendChild(bookingDiv);
-            }
-        });
-        calendar.appendChild(day);
+                bookingDiv.style.backgroundColor = b.color;
+                bookingDiv.innerHTML = `${b.startTime} - ${b.endTime} <br> ${b.comment}`;
+                bookingDiv.onclick = () => removeBooking(b);
+                dayDiv.appendChild(bookingDiv);
+            });
+
+            calendar.appendChild(dayDiv);
+        }
+
+        document.getElementById('currentMonth').innerText = new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' });
     }
-}
+
+    function removeBooking(booking) {
+        bookings = bookings.filter(b => b !== booking);
+        localStorage.setItem('bookings', JSON.stringify(bookings));
+        renderCalendar(); // Refresh calendar display
+    }
 
     function changeMonth(delta) {
         currentMonth += delta;
@@ -418,13 +363,10 @@
             currentMonth = 0;
             currentYear++;
         }
-        renderCalendar();
+        renderCalendar(); // Refresh calendar display
     }
 
-    window.onload = function() {
-        displayAthletes();
-        renderCalendar();
-    };
+    renderCalendar(); // Initial calendar rendering
 </script>
 </body>
 </html>
