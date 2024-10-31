@@ -371,11 +371,21 @@
         const monthHeader = document.getElementById('currentMonth');
         monthHeader.innerText = `${monthNames[currentMonth]} ${currentYear}`;
 
-        for (let i = 0; i < firstDay.getDay(); i++) {
-            const emptyDay = document.createElement('div');
-            emptyDay.className = 'day';
-            calendar.appendChild(emptyDay);
-        }
+        // Create day names
+        const dayNames = document.createElement('div');
+        dayNames.className = 'day-names';
+        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(name => {
+          const dayName = document.createElement('div');
+          dayName.textContent = name;
+          dayNames.appendChild(dayName);
+        });
+        calendar.appendChild(dayNames);
+        
+        //for (let i = 0; i < firstDay.getDay(); i++) {
+        //    const emptyDay = document.createElement('div');
+        //    emptyDay.className = 'day';
+        //    calendar.appendChild(emptyDay);
+        //}
 
         for (let day = 1; day <= lastDay.getDate(); day++) {
             const dayDiv = document.createElement('div');
