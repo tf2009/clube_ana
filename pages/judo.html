@@ -252,25 +252,26 @@
         dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     }
 
+    // Function to add an athlete
     function addAthlete() {
-        const name = document.getElementById('athleteName').value.trim();
-        const parents = document.getElementById('athleteParents').value.trim();
-        const contact = document.getElementById('athleteContact').value.trim();
-        const escalão = document.getElementById('athleteEscalao').value.trim();
-        const comments = document.getElementById('athleteComments').value.trim();
+        const name = document.getElementById('athleteName').value;
+        const parents = document.getElementById('athleteParents').value;
+        const contact = document.getElementById('athleteContact').value;
+        const escalão = document.getElementById('athleteEscalao').value;
+        const comments = document.getElementById('athleteComments').value;
 
         if (name && parents && contact && escalão) {
             const athlete = { name, parents, contact, escalão, comments };
             athletes.push(athlete);
-            localStorage.setItem('athletes', JSON.stringify(athletes));
-            displayAthletes(); // Update the athlete list
-            clearAthleteForm();
+            localStorage.setItem(athletesKey, JSON.stringify(athletes));
+            renderAthleteList();
+            clearAthleteInputs();
         } else {
-            alert('Por favor, preencha todos os campos obrigatórios.');
+            alert("Por favor, preencha todos os campos obrigatórios.");
         }
     }
 
-    function clearAthleteForm() {
+    function clearAthleteInputs() {
         document.getElementById('athleteName').value = '';
         document.getElementById('athleteParents').value = '';
         document.getElementById('athleteContact').value = '';
@@ -278,31 +279,52 @@
         document.getElementById('athleteComments').value = '';
     }
 
-    function displayAthletes() {
-        const athleteTablesContainer = document.getElementById('athleteTables');
-        athleteTablesContainer.innerHTML = ''; // Clear existing tables
+    // Function to search athletes
+    function searchAthlete() {
+        const searchValue = document.getElementById('searchAthlete').value.toLowerCase();
+        renderAthleteList(searchValue);
+    }
 
-        const groupedAthletes = athletes.reduce((acc, athlete) => {
-            acc[athlete.escalão] = acc[athlete.escalão] || [];
-            acc[athlete.escalão].push(athlete);
-            return acc;
-        }, {});
+    // Function to render athlete list
+    function renderAthleteList(filter = '') {
+        const filteredAthletes = athletes.filter(athlete => athlete.name.toLowerCase().includes(filter));
+        const athleteTables = document.getElementById('athleteTables');
+        athleteTables.innerHTML = '';
 
-        for (const escalão in groupedAthletes) {
-            const athletesList = groupedAthletes[escalão];
-            let tableHTML = `<div class="escalão-header">${escalão}</div><table><thead><tr><th>Nome</th><th>Pais</th><th>Contacto</th><th>Comentários</th><th>Remover</th></tr></thead><tbody>`;
-            athletesList.forEach((athlete, index) => {
-                tableHTML += `<tr><td>${athlete.name}</td><td>${athlete.parents}</td><td>${athlete.contact}</td><td>${athlete.comments}</td><td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td></tr>`;
+        if (filteredAthletes.length > 0) {
+            const table = document.createElement('table');
+            table.innerHTML = `
+                <tr>
+                    <th>Nome</th>
+                    <th>Pais</th>
+                    <th>Contacto</th>
+                    <th>Escalão</th>
+                    <th>Comentários</th>
+                    <th>Ação</th>
+                </tr>
+            `;
+            filteredAthletes.forEach((athlete, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${athlete.name}</td>
+                    <td>${athlete.parents}</td>
+                    <td>${athlete.contact}</td>
+                    <td>${athlete.escalão}</td>
+                    <td>${athlete.comments}</td>
+                    <td><span class="remove-athlete" onclick="removeAthlete(${index})">Remover</span></td>
+                `;
+                table.appendChild(row);
             });
-            tableHTML += `</tbody></table>`;
-            athleteTablesContainer.innerHTML += tableHTML;
+            athleteTables.appendChild(table);
+        } else {
+            athleteTables.innerHTML = '<p>Nenhum atleta encontrado.</p>';
         }
     }
 
     function removeAthlete(index) {
         athletes.splice(index, 1);
-        localStorage.setItem('athletes', JSON.stringify(athletes));
-        displayAthletes();
+        localStorage.setItem(athletesKey, JSON.stringify(athletes));
+        renderAthleteList();
     }
 
     // Function to add a booking
