@@ -366,11 +366,11 @@
     const calendar = document.getElementById('calendar');
     calendar.innerHTML = ''; // Clear previous calendar
 
+    // Create the weekday header row
     const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-    // Create and append weekday headers
     const headerRow = document.createElement('div');
-    headerRow.classList.add('weekday-row');
+    headerRow.classList.add('weekday-header'); // Add a class for styling
+
     weekdays.forEach(day => {
         const dayHeader = document.createElement('div');
         dayHeader.classList.add('day-header');
@@ -395,6 +395,7 @@
         day.classList.add('day');
         day.innerText = i + 1;
 
+        // Check for bookings and display them
         bookings.forEach(booking => {
             if (booking.date === `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${(i + 1).toString().padStart(2, '0')}`) {
                 const bookingDiv = document.createElement('div');
@@ -407,7 +408,6 @@
         calendar.appendChild(day);
     }
 }
-
 
     function changeMonth(delta) {
         currentMonth += delta;
