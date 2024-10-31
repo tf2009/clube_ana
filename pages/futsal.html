@@ -363,38 +363,51 @@
     }
 
     function renderCalendar() {
-        const calendar = document.getElementById('calendar');
-        calendar.innerHTML = '';
-        const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        const firstDay = new Date(currentYear, currentMonth, 1);
-        const lastDay = new Date(currentYear, currentMonth + 1, 0);
-        const monthHeader = document.getElementById('currentMonth');
-        monthHeader.innerText = `${monthNames[currentMonth]} ${currentYear}`;
+    const calendar = document.getElementById('calendar');
+    calendar.innerHTML = ''; // Clear previous calendar
 
-        for (let i = 0; i < firstDay.getDay(); i++) {
-            const emptyDay = document.createElement('div');
-            emptyDay.className = 'day';
-            calendar.appendChild(emptyDay);
-        }
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-        for (let day = 1; day <= lastDay.getDate(); day++) {
-            const dayDiv = document.createElement('div');
-            dayDiv.className = 'day';
-            dayDiv.innerText = day;
-            const date = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    // Create and append weekday headers
+    const headerRow = document.createElement('div');
+    headerRow.classList.add('weekday-row');
+    weekdays.forEach(day => {
+        const dayHeader = document.createElement('div');
+        dayHeader.classList.add('day-header');
+        dayHeader.innerText = day;
+        headerRow.appendChild(dayHeader);
+    });
+    calendar.appendChild(headerRow);
 
-            const bookingsForDay = bookings.filter(b => b.bookingDate === date);
-            bookingsForDay.forEach(b => {
+    const monthDays = getDaysInMonth(currentYear, currentMonth);
+    document.getElementById('currentMonth').innerText = `${currentDate.toLocaleString('default', { month: 'long' })} ${currentYear}`;
+    
+    // Create empty slots for the first day of the month
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    for (let i = 0; i < firstDay; i++) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.classList.add('day'); // Apply styling as needed
+        calendar.appendChild(emptyDiv);
+    }
+
+    for (let i = 0; i < monthDays; i++) {
+        const day = document.createElement('div');
+        day.classList.add('day');
+        day.innerText = i + 1;
+
+        bookings.forEach(booking => {
+            if (booking.date === `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${(i + 1).toString().padStart(2, '0')}`) {
                 const bookingDiv = document.createElement('div');
                 bookingDiv.className = 'booking';
-                bookingDiv.style.backgroundColor = b.color;
-                bookingDiv.innerText = `${b.startTime} - ${b.endTime} ${b.comment}`;
-                dayDiv.appendChild(bookingDiv);
-            });
-
-            calendar.appendChild(dayDiv);
-        }
+                bookingDiv.style.backgroundColor = booking.color;
+                bookingDiv.innerText = `${booking.startTime} - ${booking.endTime} ${booking.comment}`;
+                day.appendChild(bookingDiv);
+            }
+        });
+        calendar.appendChild(day);
     }
+}
+
 
     function changeMonth(delta) {
         currentMonth += delta;
